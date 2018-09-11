@@ -4,7 +4,7 @@
     
 
 
-' a test module '            #表示模块的文档注释
+' a stock future data module '            #表示模块的文档注释
 
 __author__ = 'hylas'  #作者名
 
@@ -16,14 +16,19 @@ import pymongo
 import urllib2
 from pymongo import MongoClient
 
+DB_INFO ={ "IP":"localhost", "PORT":27017 }
+
 
 '''
 输出接口:
 loadsaveStockList()
+loadsaveStockKHis2db( code )
+loadsaveStockKHis2db_all()
 saveFuturelist2db()    # save futurelist.csv to db
 loadsaveFutureKHis2db( futureName )
 loadsaveFutureKHis2db_all()
-loadsaveFutureKNow2db_all():
+loadsaveFutureKNow2db_all() 
+
 
 loadFutureKhis2file( futureName ) 
 loadFutureKhis2file_all()
@@ -32,40 +37,116 @@ saveFutureKhis2db_all()
 
 '''
 
-
+######################## STOCK #########################
 def loadStocklist2file():
     stocklist = ts.get_stock_basics()
     stocklist.to_csv("stocklist.csv")
+    #data = pd.read_csv( "stocklist.csv" )
     return stocklist
     pass
 
 def saveStocklist2db():
-    client = MongoClient('localhost',27017)
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     stock_info = client.market.stock_info
-    data = pd.read_csv( "stocklist.csv" )
+    data = loadStocklist2file()
     #print data[0:2]
-    
+ 
     for index, row in data.iterrows():
         #print  row.to_dict()
         rec = row.to_dict()
-    
-        try:
-                 
+        rec["code"]=index    
+        try:                 
             rs = stock_info.insert_one( rec )
         except Exception , e:
             pass            
         pass        
-        
-         
+ 
     pass    
 
 def loadsaveStockList():
     loadStocklist2file()
     saveStocklist2db()
-    pass    
+    pass  
 
+def loadsaveStockKHis2db( code ):
+    #ts.get_k_data(code,'2010-01-01', '2017-01-01') 
+    code =  code.strip()  
+    kdata = ts.get_k_data(code,'2010-01-01', '2018-09-01' ) 
+    kdata = kdata[:-1]  #去掉当天
+    print type(kdata), '  len:', len(kdata)
+    print kdata[-2:]
+ 
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    stock_k_his = client.market.stock_k_his    
+    for index, row in kdata.iterrows():
+        #print  row.to_dict()
+        rec = row.to_dict()    
+        try:                  
+            rs = stock_k_his.insert_one( rec )
+        except Exception , e:
+            pass            
+        pass 
+    
+    print '*'
+
+    pass
+
+#与his的区别是，只保存最近30天，提高效率， 
+#如果是  16:00 以前，不保存当天
+#
+def loadsaveStockK2db( code ):
+    #ts.get_k_data(code,'2010-01-01', '2017-01-01') 
+    code =  code.strip()  
+    kdata = ts.get_k_data(code ) 
+    
+    kdata = kdata[-31:] #最近30天
+    localtime = time.localtime(time.time())
+    if(localtime.tm_hour <16 ):
+        kdata = kdata[:-1]  #去掉当天
+
+    print type(kdata), '  len:', len(kdata)
+    #print kdata[-2:]
+
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    stock_k = client.market.stock_k   
+    for index, row in kdata.iterrows():
+        #print  row.to_dict()
+        rec = row.to_dict()    
+        try:                  
+            rs = stock_k.insert_one( rec )
+        except Exception , e:
+            pass            
+        pass 
+    
+    print '*'
+
+    pass
+
+def loadsaveStockKHis2db_all() :
+    doStock_all( loadsaveStockKHis2db )
+    pass
+
+def loadsaveStockK2db_all() :
+    doStock_all( loadsaveStockK2db )
+    pass
+
+def doStock_all( doFunction ):
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    stock_info = client.market.stock_info
+    data = pd.DataFrame(list(stock_info.find()))
+    del data['_id']
+    #print type(data)
+    #print data
+    for index,row in data.iterrows():
+        print ".",
+        doFunction( row['code'] )
+        #break
+    pass
+    print ""
+
+######################## FUTURE #########################
 def saveFuturelist2db():
-    client = MongoClient('localhost',27017)
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     f_info = client.market.f_info
     data = pd.read_csv( "futurelist.csv" )
     #print data[0:2]
@@ -101,7 +182,7 @@ def loadFutureNewPrice(futureName):
     return ''
 
 def doFuture_all( doFunction ):
-    client = MongoClient('localhost',27017)
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     f_info = client.market.f_info
     data = pd.DataFrame(list(f_info.find()))
     del data['_id']
@@ -109,13 +190,16 @@ def doFuture_all( doFunction ):
     #print data
     for index,row in data.iterrows():
         #print row['code']
+        print ".",
         doFunction( row['code'] )
+        #break
     pass
+    print ""
 
 def loadFutureKhis2file_all():
     doFuture_all( loadFutureKhis2file )
     return 
-    client = MongoClient('localhost',27017)
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     f_info = client.market.f_info
     data = pd.DataFrame(list(f_info.find()))
     del data['_id']
@@ -129,7 +213,7 @@ def loadFutureKhis2file_all():
 
 def saveFutureKhis2db( futureName, now = False ):
     
-    client = MongoClient('localhost',27017)
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     f_k = client.market.f_k     
     f = open('./'+futureName+'.txt', 'r')
     data = f.read()
@@ -153,7 +237,7 @@ def saveFutureKhis2db( futureName, now = False ):
         except Exception , e:
             pass            
         pass
-    f.clos8e()
+    f.close()
  
     pass
 
@@ -167,20 +251,29 @@ def saveFutureKhis2db_all(  ):
     pass
 
 def loadFutureKhis2file_all():
-    loadFutureKhis2file_all()
-    saveFutureKhis2db_all()
+    doFuture_all( loadFutureKhis2file )
+
+    pass    
+
+def loadsaveFutureKHis2db_all():
+    doFuture_all( loadsaveFutureKHis2db )
+ 
     pass    
 
 def loadsaveFutureKNow2db_all():
     #load data
+    print 'loadFutureKhis2file all '
     loadFutureKhis2file_all()  
+      
     #save 7 day data 2 db
-    client = MongoClient('localhost',27017)
+    print 'save 7 day data 2 db '
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     f_info = client.market.f_info
     data = pd.DataFrame(list(f_info.find()))
     del data['_id']
     #print type(data)
     #print data
+    
     for index,row in data.iterrows():
         #print row['code']
         saveFutureKhis2db( row['code'] ,now = True )
@@ -190,13 +283,25 @@ def loadsaveFutureKNow2db_all():
 
 
 def test():
+    #loadsaveStockList()
+    #loadsaveFutureKNow2db_all()
+    #loadFutureKhis2file_all()
+    #loadsaveFutureKHis2db_all()
+    #loadsaveStockKHis2db('600000')
+    #loadsaveStockKHis2db_all()
+    #loadsaveStockK2db_all()
+
+
+    #saveStocklist2db()
+
     return True
 
 '''
-当我们在命令行运行模块文件时，Python解释器把一个特殊变量__name__置为__main__，
-而如果在其他地方导入该hello模块时，if判断将失败，
-因此，这种if测试可以让一个模块通过命令行运行时执行一些额外的代码，
-最常见的就是运行测试。
+loadsaveStockList()
+saveFuturelist2db()    # save futurelist.csv to db
+loadsaveFutureKHis2db( futureName )
+loadsaveFutureKHis2db_all()
+loadsaveFutureKNow2db_all()
 '''
 if __name__=='__main__':
     test()  
