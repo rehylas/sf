@@ -1,0 +1,17 @@
+创建索引：
+https://blog.csdn.net/leshami/article/details/53817126
+
+唯一字段
+https://www.v2ex.com/t/364141
+
+python 使用mongo
+
+http://www.runoob.com/python3/python-mongodb.html
+
+mongo 性能调优
+https://blog.csdn.net/happy_jijiawei/article/details/53737858
+https://blog.csdn.net/liqfyiyi/article/details/51791233
+https://blog.csdn.net/zrjdds/article/details/52159936
+
+Pandas中直接加载MongoDB的数据
+https://www.cnblogs.com/snaildev/archive/2018/04/22/8907952.html

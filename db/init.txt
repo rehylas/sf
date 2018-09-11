@@ -1,0 +1,45 @@
+#需求： 
+#1.股票日历史表（10年历史，一月更新一次）stock_k_his
+#2.股票日线当前表保留两年，每日更新 stock_k   3.生成表=>4, 9 , 18均线 stock_k_ma  
+#  1.期货当前表保留180天， 每日更新  f_k   2.生成表 =>振幅5，20    f_zf20
+
+#股票代码表  stock_info
+#期货代码表  f_info
+
+#创建库
+use market
+
+#创建 Collections   http://blog.sina.com.cn/s/blog_7ed3ed3d0101gphj.html
+db.createCollection("stock_k_his")
+db.createCollection("stock_k")
+db.createCollection("stock_k_ma")
+db.createCollection("f_k")
+db.createCollection("f_zf20")
+db.createCollection("stock_info")
+db.createCollection("f_info")
+
+唯一索引：
+stock_info    --> code
+f_info    -->code 
+
+db.stock_info.createIndex({code:1},{unique:true})
+db.f_info.createIndex({code:1},{unique:true})
+
+#创建索引
+stock_k_his --> code date
+stock_k --> code date
+stock_k_ma --> code date
+
+f_k --> code date
+f_zf20 --> code date
+
+db.stock_k_his.createIndex({code:1,date:1},{unique:true})
+db.stock_k.createIndex({code:1,date:1},{unique:true})
+db.stock_k_ma.createIndex({code:1,date:1},{unique:true})
+
+db.f_k.createIndex({code:1,date:1},{unique:true})
+db.f_zf20.createIndex({code:1,date:1},{unique:true})
+
+
+
+
