@@ -29,6 +29,9 @@ loadsaveFutureKHis2db( futureName )
 loadsaveFutureKHis2db_all()
 loadsaveFutureKNow2db_all() 
 
+makeFutureZf20( futureName, nDay = 1 )
+signalFutureZf20( futureName, nDay = 1 )
+
 
 loadFutureKhis2file( futureName ) 
 loadFutureKhis2file_all()
@@ -280,6 +283,25 @@ def loadsaveFutureKNow2db_all():
      
     pass  
 
+# f_zf20     { code, date,  zf, zf5, zf20  }
+def makeFutureZf20( futureName, nDay = 1 ):
+    # make zf20 data  2 db
+    print 'make zf20 data  2 db '
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    f_k = client.market.f_k
+ 
+    data = pd.DataFrame( list( f_k.find( {"code":"RU0"} ).sort( "date"  , 1 ) ) )
+    del data['_id']
+    #print type(data)
+    #print data
+    
+    for index,row in data.iterrows():
+        #print row['code'], row['date'] 
+        #saveFutureKhis2db( row['code'] ,now = True )       
+    pass
+
+def signalFutureMa( futureName, nDay = 1 ):
+    pass
 
 
 def test():
@@ -291,8 +313,8 @@ def test():
     #loadsaveStockKHis2db_all()
     #loadsaveStockK2db_all()
 
-
     #saveStocklist2db()
+    makeFutureZf20( "RU0")
 
     return True
 
