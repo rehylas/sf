@@ -16,7 +16,7 @@ import pymongo
 import urllib2
 from pymongo import MongoClient
 
-DB_INFO ={ "IP":"localhost", "PORT":27017 }
+DB_INFO ={ "IP":"192.168.0.208", "PORT":27017 }
 
 
 '''
@@ -284,22 +284,61 @@ def loadsaveFutureKNow2db_all():
     pass  
 
 # f_zf20     { code, date,  zf, zf5, zf20  }
-def makeFutureZf20( futureName, nDay = 1 ):
+def makeFutureZf20( futureName, nDay = 20 ):
     # make zf20 data  2 db
     print 'make zf20 data  2 db '
     client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
     f_k = client.market.f_k
+    f_zf20 = client.market.f_zf20
  
-    data = pd.DataFrame( list( f_k.find( {"code":"RU0"} ).sort( "date"  , 1 ) ) )
+    data = pd.DataFrame( list( f_k.find( {"code": futureName } ).sort( "date"  , 1 ) ) )
     del data['_id']
     #print type(data)
     #print data
-    
-    for index,row in data.iterrows():
-        #print row['code'], row['date'] 
-        #saveFutureKhis2db( row['code'] ,now = True )       
+
+    data[['high', 'low']] = data[['high', 'low']].astype(float)
+
+    data['zf'] = (data['high'] - data['low']) *100 / data['low']
+  
+ 
+    data['zf5'] = 0.0
+    data['zf20'] = 0.0
+
+    nlen = len(data)    
+    for offset in range( nlen-nDay, nlen  ):
+        print offset, nlen
+        zfinfo = calcFutureZf(offset, data)
+        row_one = data.iloc[offset]
+        rec_info = {"code":row_one.code, "date":row_one.date, "zf":row_one.zf,"zf5":zfinfo[0], "zf20": zfinfo[0]  }
+        try:
+            rs = f_zf20.insert_one( rec_info )        
+        except Exception , e:
+            pass     
+      
+
     pass
 
+def makeFutureZf20_all():
+    doFuture_all( makeFutureZf20 )
+    pass
+ 
+
+
+def calcFutureZf( index, datadf ):
+    nlen = len( datadf )  
+    data5 = datadf[index+1-5:index+1]
+    s_zf = data5['zf']
+    zf5 = s_zf.mean()
+
+    data20 = datadf[index+1-20:index+1]
+    s_zf = data20['zf']
+    zf20 = s_zf.mean()
+
+
+    return [  round(zf5,2), round(zf20,2)  ]
+    pass
+
+#db.f_zf20.find({ date:"2018-09-13" }).sort( {"zf20":-1} )
 def signalFutureMa( futureName, nDay = 1 ):
     pass
 
@@ -314,7 +353,8 @@ def test():
     #loadsaveStockK2db_all()
 
     #saveStocklist2db()
-    makeFutureZf20( "RU0")
+    #makeFutureZf20( "RU0")
+    makeFutureZf20_all()
 
     return True
 
