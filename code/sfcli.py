@@ -1,5 +1,6 @@
 # -*- coding:utf8 -*-
 
+import sys
 import cmd   
 import sfdatalib  
 
@@ -52,11 +53,7 @@ class MyCmd(cmd.Cmd):  # Cmd是以面向对象设计的
             print "ok"
             return 
 
-        if( arg == "fhisk"):
-            print "init future his k data  "
-            sfdatalib.loadsaveFutureKHis2db_all()
-            print "ok"
-            return   
+ 
 
         print "error arg:", arg
         print "----------------------------------------"
@@ -73,6 +70,12 @@ class MyCmd(cmd.Cmd):  # Cmd是以面向对象设计的
             sfdatalib.loadsaveFutureKNow2db_all() 
             print "ok"
             return 
+
+        if( arg == "fhisk"):
+            print "init future his k data  "
+            sfdatalib.loadsaveFutureKHis2db_all()
+            print "ok"
+            return              
 
         if( arg == "stock" or arg == "s" ):
             print "loadsave  stock now k"
@@ -94,13 +97,80 @@ class MyCmd(cmd.Cmd):  # Cmd是以面向对象设计的
 
         pass 
 
+
+    def do_makezf(self, arg):
+        if( arg == "future" or arg == "f" ):
+            print "loadsave future now k"
+            sfdatalib.makeFuturezf20_all() 
+            print "ok"
+            return 
+
+        print "error arg:", arg
+        print "----------------------------------------"
+        print "example:"
+        print "makezf future  "  
+        print "----------------------------------------"             
+
+        pass 
+
+    def do_signal(self, arg):
+        if( arg == "futurezf" or arg == "fzf" ):
+            print "signal futurezf now k"
+            sfdatalib.signalFutureZf() 
+            print "ok"
+            return 
+
+        print "error arg:", arg
+        print "----------------------------------------"
+        print "example:"
+        print "signal futurezf  "  
+        print "----------------------------------------"             
+
+        pass 
+
+ 
+
+
+
     def do_quit(self, arg):  #定义退出命令'quit'，退出程序
         return True  # 函数返回True，则干净退出程序
  
 
     do_q = do_quit  # 定义'quit'命令的别名'q'
 
+import time
+#16:00 开始 ， 执行下载future k ,   makefuturek   , signal k
+def runserver():
+    while( True ):
+        time.sleep( 5 )
+        print '.',
+        now = time.localtime( time.time() )   
+        #print now.tm_hour ,tm_min
+        if( now.tm_hour == 16 and now.tm_min == 2 ):
+            print "-------------------------------------"
+            print "do  future data "
+            sfdatalib.loadsaveFutureKNow2db_all()
+            sfdatalib.makeFuturezf20_all()
+            sfdatalib.signalFutureZf()
+            print "-------------------------------------"
+            time.sleep( 60 )
+            
+
+
+
+
+      
+    pass
 
 if __name__ == '__main__':
-    myCmd = MyCmd()  # 创建一个MyCmd的实例
-    myCmd.cmdloop()  # 启动cmd循环
+    if( len( sys.argv ) == 1 ):
+        myCmd = MyCmd()  # 创建一个MyCmd的实例
+        myCmd.cmdloop()  # 启动cmd循环
+        exit()
+
+    if( sys.argv[1] == '-d' ):
+        print 'run server'
+        runserver()
+        exit()    
+    print sys.argv[1], ' error '
+    print 'help'

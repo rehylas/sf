@@ -1,15 +1,15 @@
-#ÐèÇó£º 
-#1.¹ÉÆ±ÈÕÀúÊ·±í£¨10ÄêÀúÊ·£¬Ò»ÔÂ¸üÐÂÒ»´Î£©stock_k_his
-#2.¹ÉÆ±ÈÕÏßµ±Ç°±í±£ÁôÁ½Äê£¬Ã¿ÈÕ¸üÐÂ stock_k   3.Éú³É±í=>4, 9 , 18¾ùÏß stock_k_ma  
-#  1.ÆÚ»õµ±Ç°±í±£Áô180Ìì£¬ Ã¿ÈÕ¸üÐÂ  f_k   2.Éú³É±í =>Õñ·ù5£¬20    f_zf20
+#ï¿½ï¿½ï¿½ï¿½ 
+#1.ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½Ê·ï¿½ï¿½10ï¿½ï¿½ï¿½ï¿½Ê·ï¿½ï¿½Ò»ï¿½Â¸ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½stock_k_his
+#2.ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ßµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê£¬Ã¿ï¿½Õ¸ï¿½ï¿½ï¿½ stock_k   3.ï¿½ï¿½ï¿½É±ï¿½=>4, 9 , 18ï¿½ï¿½ï¿½ï¿½ stock_k_ma  
+#  1.ï¿½Ú»ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½180ï¿½ì£¬ Ã¿ï¿½Õ¸ï¿½ï¿½ï¿½  f_k   2.ï¿½ï¿½ï¿½É±ï¿½ =>ï¿½ï¿½ï¿½5ï¿½ï¿½20    f_zf20
 
-#¹ÉÆ±´úÂë±í  stock_info
-#ÆÚ»õ´úÂë±í  f_info
+#ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½  stock_info
+#ï¿½Ú»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  f_info
 
-#´´½¨¿â
+#ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 use market
 
-#´´½¨ Collections   http://blog.sina.com.cn/s/blog_7ed3ed3d0101gphj.html
+#ï¿½ï¿½ï¿½ï¿½ Collections   http://blog.sina.com.cn/s/blog_7ed3ed3d0101gphj.html
 db.createCollection("stock_k_his")
 db.createCollection("stock_k")
 db.createCollection("stock_k_ma")
@@ -18,14 +18,16 @@ db.createCollection("f_zf20")
 db.createCollection("stock_info")
 db.createCollection("f_info")
 
-Î¨Ò»Ë÷Òý£º
+db.createCollection("f_signal_zf20")
+
+Î¨Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 stock_info    --> code
 f_info    -->code 
 
 db.stock_info.createIndex({code:1},{unique:true})
 db.f_info.createIndex({code:1},{unique:true})
 
-#´´½¨Ë÷Òý
+#ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 stock_k_his --> code date
 stock_k --> code date
 stock_k_ma --> code date
@@ -39,6 +41,9 @@ db.stock_k_ma.createIndex({code:1,date:1},{unique:true})
 
 db.f_k.createIndex({code:1,date:1},{unique:true})
 db.f_zf20.createIndex({code:1,date:1},{unique:true})
+
+db.f_signal_zf20.createIndex({code:1,date:1,type:1},{unique:true})
+ 
 
 
 

@@ -16,7 +16,9 @@ import pymongo
 import urllib2
 from pymongo import MongoClient
 
-DB_INFO ={ "IP":"192.168.0.208", "PORT":27017 }
+#DB_INFO ={ "IP":"192.168.0.208", "PORT":27017 }
+DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
+ 
 
 
 '''
@@ -30,6 +32,7 @@ loadsaveFutureKHis2db_all()
 loadsaveFutureKNow2db_all() 
 
 makeFutureZf20( futureName, nDay = 1 )
+makeFuturezf20_all( )
 signalFutureZf20( futureName, nDay = 1 )
 
 
@@ -309,7 +312,7 @@ def makeFutureZf20( futureName, nDay = 20 ):
         print offset, nlen
         zfinfo = calcFutureZf(offset, data)
         row_one = data.iloc[offset]
-        rec_info = {"code":row_one.code, "date":row_one.date, "zf":row_one.zf,"zf5":zfinfo[0], "zf20": zfinfo[0]  }
+        rec_info = {"code":row_one.code, "date":row_one.date, "zf":row_one.zf,"zf5":zfinfo[0], "zf20": zfinfo[1]  }
         try:
             rs = f_zf20.insert_one( rec_info )        
         except Exception , e:
@@ -318,9 +321,11 @@ def makeFutureZf20( futureName, nDay = 20 ):
 
     pass
 
-def makeFutureZf20_all():
+def makeFuturezf20_all( ):
     doFuture_all( makeFutureZf20 )
     pass
+
+
  
 
 
@@ -338,11 +343,107 @@ def calcFutureZf( index, datadf ):
     return [  round(zf5,2), round(zf20,2)  ]
     pass
 
-#db.f_zf20.find({ date:"2018-09-13" }).sort( {"zf20":-1} )
-def signalFutureMa( futureName, nDay = 1 ):
+
+#  倒20 个时间， 横向比较所有品种 统计最大5个  type = 1
+#  倒20 个时间， 取当日所有品种  和  昨日所有品种比较，  新进前5做为 signal   type = 2
+def signalFutureZf(  nDay = 20 ):
+    now = time.localtime( time.time() - 86400*0 )   
+    todayStr = time.strftime('%Y-%m-%d',  now )
+
+    oneDay = time.localtime( time.time() - 86400*nDay )   
+    onedayStr = time.strftime('%Y-%m-%d',  oneDay )
+
+    #top  5
+    for index in range(0,nDay):
+        oneDay = time.localtime( time.time() - 86400*index )   
+        onedayStr = time.strftime('%Y-%m-%d',  oneDay )        
+        maxFutureZf2db( onedayStr )
+
+    #in top 5
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    f_zf20 = client.market.f_zf20
+    data = pd.DataFrame( list( f_zf20.find( {"code":"RU0"}  ).sort( "date"  , -1 ) ) )
+    print data
+    for index in range(0,nDay):
+        if( index+1  >= len(data) ):
+            break
+        row_one = data.iloc[index]
+        row_one_bef = data.iloc[index+1]
+        print row_one.date, row_one_bef.date
+        inMaxFuturezftop5( row_one.date, row_one_bef.date)
+        pass
     pass
 
 
+#db.f_zf20.find({date:"2018-09-14" }).sort({"zf20":-1} )
+__MAX_ZF_COUNT = 5
+def maxFutureZf2db( dateStr ):
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    f_k = client.market.f_k
+    f_zf20 = client.market.f_zf20
+    f_signal_zf20  = client.market.f_signal_zf20
+    print dateStr
+     
+
+    data = pd.DataFrame( list( f_zf20.find( {"date":dateStr}  ).sort( "zf20"  , -1 ) ) )
+    #print data
+    if( len(data)  < __MAX_ZF_COUNT ):
+        return
+
+    for index in range( 0,__MAX_ZF_COUNT ):
+        #print index, len(data)
+        row_one = data.iloc[index]
+        #print row_one.date , row_one.code, row_one.zf20
+
+        rec_info = {"code":row_one.code, "date":row_one.date, "zf20":row_one.zf20,"type":1, "param1":index+1   }
+        try:
+            rs = f_signal_zf20.insert_one( rec_info )        
+        except Exception , e:
+            pass 
+
+        pass
+            
+    pass
+
+def inMaxFuturezftop5( oneDay, befDay):      
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    f_zf20 = client.market.f_zf20
+    f_signal_zf20  = client.market.f_signal_zf20    
+
+    data_day = pd.DataFrame( list( f_signal_zf20.find( {"date":oneDay,"type":1}  ) ) )
+    data_bef = pd.DataFrame( list( f_signal_zf20.find( {"date":befDay,"type":1}  ) ) )
+
+    if( len(data_day) != __MAX_ZF_COUNT or len(data_bef) != __MAX_ZF_COUNT  ):
+        # print data_day
+        # print data_bef
+        print 'len != ', __MAX_ZF_COUNT, " ", len(data_day), len(data_bef)
+        return 
+
+    oneDayList =[]
+    befDayList=[]
+ 
+    for index in range(0, __MAX_ZF_COUNT) :
+        oneDayList.append(  data_day.iloc[index].code  )
+        befDayList.append(  data_bef.iloc[index].code  )
+
+        pass   
+    # print oneDayList
+    # print befDayList    
+    dimList = [item for item in oneDayList if item not in befDayList ]
+    #print dimList
+    print 'new ', len(dimList), " in top 5"
+    for index in range(0, len(dimList) ):
+        rec_info = {"code":dimList[index], "date":oneDay, "zf20":0.0,"type":2, "param1":0   }
+        try:
+            rs = f_signal_zf20.insert_one( rec_info )        
+        except Exception , e:
+            pass 
+    pass
+
+def signalFutureZf_all(  ):
+    pass
+
+import datetime
 def test():
     #loadsaveStockList()
     #loadsaveFutureKNow2db_all()
@@ -354,7 +455,21 @@ def test():
 
     #saveStocklist2db()
     #makeFutureZf20( "RU0")
-    makeFutureZf20_all()
+    #makeFuturezf20_all()
+    #signalFutureZf()
+    
+
+     
+
+    #inMaxFuturezftop5("2018-09-11", "2018-09-10" )
+
+    # A= [1,2,3]
+    # B= [2,3,4]
+
+    # dim_list = [item for item in B if item not in A]
+    # print dim_list
+
+ 
 
     return True
 
