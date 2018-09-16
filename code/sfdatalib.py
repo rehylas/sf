@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-   
 #!/usr/bin/env python       
     
-
-
 ' a stock future data module '            #表示模块的文档注释
 
 __author__ = 'hylas'  #作者名
@@ -11,15 +9,34 @@ __author__ = 'hylas'  #作者名
 import tushare as ts
 import pandas as pd 
 import time
+import os
 import datetime
 import pymongo
 import urllib2
 from pymongo import MongoClient
 
+import ConfigParser
+
+
+#os.environ["DBIP"] 
 #DB_INFO ={ "IP":"192.168.0.208", "PORT":27017 }
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
  
 
+def readcfg():
+    global DB_INFO
+    cf=ConfigParser.ConfigParser()
+    cf.read("./config.ini")
+    db_host = None
+    try:
+        db_host = cf.get("db", "db_host")
+    except:
+        print "get db db_host error"    
+    if( db_host != None ):
+        DB_INFO ={ "IP":db_host, "PORT":27017 }
+    pass
+
+readcfg()
 
 '''
 输出接口:
