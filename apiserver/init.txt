@@ -1,0 +1,4 @@
+virtualenv venv
+
+\Python27\Scripts\virtualenv.exe venv
+

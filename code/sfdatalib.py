@@ -18,7 +18,6 @@ from pymongo import MongoClient
 import ConfigParser
 
 
-#os.environ["DBIP"] 
 #DB_INFO ={ "IP":"192.168.0.208", "PORT":27017 }
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
  
