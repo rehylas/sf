@@ -1,0 +1,23 @@
+
+.normal {
+    font-family: Georgia, sans-serif;
+    margin-top: 3em;
+    text-align: center;
+  }
+  
+ 
+  
+  .content {
+    height: 328px;
+    background-size: 388px 328px;
+  }
+  
+  .main {
+    font-size: 1.2em;
+    margin-top: 1.8em;
+    list-style: none;
+    line-height: 1.5em;
+  }
+  
+ 
+  
