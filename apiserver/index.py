@@ -24,7 +24,6 @@ DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
-
 app.logger.debug('app start ...')
 
  
