@@ -16,12 +16,15 @@ import pandas as pd
 import ConfigParser
 
 from flask import Flask
+from flask_cors import CORS
 
 
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
  
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
+
 app.logger.debug('app start ...')
 
  
@@ -101,15 +104,19 @@ def future_zf_list(code):
         dataLen = 120
     else:
         dataLen =len(data_list)    
-    resp ='['
+    resp ='{"data":['
     for i in range(0, dataLen):
         #jstr = json.dumps( data_list[i] )
+        
         item = data_list[i] 
         item.pop('_id')
         print item
         jstr = json.dumps(  item )
-        resp += jstr
-    resp += ']'
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr  
+    resp += ']}'
     
     return ''+resp
 
@@ -129,15 +136,18 @@ def future_zf_top5_list(date = None):
         dataLen = 5
     else:
         dataLen =len(data_list)    
-    resp ='['
+    resp ='{"data":['
     for i in range(0, dataLen):
         #jstr = json.dumps( data_list[i] )
         item = data_list[i] 
         item.pop('_id')
         print item
         jstr = json.dumps(  item )
-        resp += jstr
-    resp += ']'
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr  
+    resp += ']}'
     
     return ''+resp
 
@@ -161,15 +171,19 @@ def future_zf_in_top5_today(  ):
  
     dataLen =len(data_list)    
 
-    resp ='['
+    resp ='{"data":['
     for i in range(0, dataLen):
+     
         #jstr = json.dumps( data_list[i] )
         item = data_list[i] 
         item.pop('_id')
         print item
         jstr = json.dumps(  item )
-        resp += jstr
-    resp += ']'
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr    
+    resp += ']}'
     
     return ''+resp
     
