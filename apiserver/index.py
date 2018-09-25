@@ -12,7 +12,6 @@ from pymongo import MongoClient
 import json
 
 import pandas as pd 
-
 import ConfigParser
 
 from flask import Flask
@@ -21,8 +20,8 @@ from flask_cors import CORS
 
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
  
-
 app = Flask(__name__)
+app.run( host='0.0.0.0' )
 CORS(app, supports_credentials=True)
 app.logger.debug('app start ...')
 

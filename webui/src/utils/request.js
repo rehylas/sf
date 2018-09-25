@@ -1,7 +1,8 @@
 import fetch from 'dva/fetch';
 
-const apServUrl ="http://192.168.0.208:5000"
+//const apServUrl ="http://192.168.0.208:5000"
 //const apServUrl ="http://localhost:5000"
+const apServUrl ="http://w000m.eicp.net:5000"
 
 function parseJSON(response) {
   return response.json();

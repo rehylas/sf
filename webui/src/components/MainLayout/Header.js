@@ -31,15 +31,22 @@ class Header extends Component {
                         <Icon type="bars" />signal
                     </Link>
                 </Menu.Item>
+                <Menu.Item key="/zfline">
+                    <Link to="/zfline">
+                        <Icon type="bars" />zfline
+                    </Link>
+                </Menu.Item>
 
-                <Menu.Item key="/404">
+                
+
+                {/* <Menu.Item key="/404">
                     <Link to="/page-you-dont-know">
                         <Icon type="frown-circle" />404
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="/antd">
                     <a href="https://www.baidu.com">w000m</a>
-                </Menu.Item>
+                </Menu.Item> */}
             </Menu>
         )
     }

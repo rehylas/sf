@@ -95,7 +95,9 @@ class Signalzf extends Component {
             tags: ['cool', 'teacher'],
           }];
           */
-         const data = this.state.datalist.data  
+         let data = []
+         if( this.state.datalist )
+            data = this.state.datalist.data   
          console.log('render : ')
          console.log( data )
         return (
