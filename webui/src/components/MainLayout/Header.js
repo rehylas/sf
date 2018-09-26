@@ -37,7 +37,12 @@ class Header extends Component {
                     </Link>
                 </Menu.Item>
 
-                
+                <Menu.Item key="/test">
+                    <Link to="/test">
+                        <Icon type="bars" />test
+                    </Link>
+                </Menu.Item>
+
 
                 {/* <Menu.Item key="/404">
                     <Link to="/page-you-dont-know">

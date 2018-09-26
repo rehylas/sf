@@ -31,7 +31,10 @@ function RouterConfig({ history, app  }) {
     app,
     component: () => import('./routes/ZFline')
   })
-  
+  const Test = dynamic({
+    app,
+    component: () => import('./routes/Test')
+  })  
 
   return (
     <ConnectedRouter history={history }>
@@ -43,6 +46,7 @@ function RouterConfig({ history, app  }) {
         <Route path="/Top5" exact component={Top5} />
         <Route path="/signals" exact component={Signalzf} />
         <Route path="/zfline" exact component={ZFline} />
+        <Route path="/test" exact component={Test} />
         
       </Switch>
       </App>  
