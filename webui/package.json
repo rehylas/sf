@@ -10,7 +10,7 @@
     "@antv/data-set": "^0.9.0",
     "antd": "^3.9.3",
     "bizcharts": "^3.2.3",
-    "bizcharts-plugin-slider": "^2.0.3", 
+    "bizcharts-plugin-slider": "^2.0.3",
     "dva": "^2.4.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"

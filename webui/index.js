@@ -29,8 +29,8 @@ app.use(express.static("./dist/static"));
 
  
 
-app.listen('80', function () {
-    console.log(`app listening on port 80`)
+app.listen('8000', function () {
+    console.log(`app listening on port 8000`)
 });
 
 process.on('uncaughtException', (err) => {
