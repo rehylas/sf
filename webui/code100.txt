@@ -1,0 +1,31 @@
+const gconfig = {
+    httpEndpoint: CXP_CHAIN_IP,
+    expireInSeconds: 60,
+    broadcast: true,
+    debug: false,
+    sign: true
+}   
+const geos = Eos(gconfig);
+
+const getBlockActions = async(id) =>{
+  
+
+    geos.getBlock( id ).then(result => { 
+        //console.log(result) 
+        let Actions = result.transactions;
+        console.log('actions:')
+        console.log( Actions )
+
+        // for item in Actions(){
+
+        // }
+
+        Actions.forEach(function(item){  
+            console.log('-------------------------------------')
+            console.log( 'transaction:',item.trx.transaction )
+   
+        });
+
+    })
+
+} 
