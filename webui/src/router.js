@@ -45,7 +45,7 @@ function RouterConfig({ history, app  }) {
         {/* <Route path="/" exact component={ MainForm } />  */}
         <Route path="/Top5" exact component={Top5} />
         <Route path="/signals" exact component={Signalzf} />
-        <Route path="/zfline" exact component={ZFline} />
+        <Route path="/zfline/:code" exact component={ZFline} />
         <Route path="/test" exact component={Test} />
         
       </Switch>

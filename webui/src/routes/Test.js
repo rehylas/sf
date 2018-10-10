@@ -3,11 +3,12 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
 //import { Chart, Tooltip, Geom, Legend, Axis } from 'bizcharts';
-import { Table, Divider, Tag } from 'antd';
+import { Table, Divider, Tag,Button } from 'antd';
 
 import styles from './Top5.css'
 import request from '../utils/request'
 import TimelineChart from '../components/TimelineChart'
+import { browserHistory } from 'react-router'
 
 class Test extends Component {
 
@@ -22,15 +23,21 @@ class Test extends Component {
   
     }
 
+    handleClick= (e) => {
+        console.log('click')
+        this.props.history.push('/zfline/RU0', {"code":"rb"} )
+        //this.setState({ size: e.target.value });
+      }
 
     render() {
 
         let dateStr ='测试页面'
-        let zfcode ="RB0"
+        let code ="RB0"
         return (
             <div className={styles.normal}>
                 <span>{dateStr}</span>
-                <TimelineChart code={zfcode}/>
+                <TimelineChart zfcode={code}/>
+                <Button onClick = { this.handleClick } >点击</Button>
               
             </div>
         )

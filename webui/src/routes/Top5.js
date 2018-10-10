@@ -6,6 +6,7 @@ import { Table, Divider, Tag } from 'antd';
 
 import styles from './Top5.css'
 import request from '../utils/request'
+import TimelineChart from '../components/TimelineChart'
 
 
 class Top5 extends Component {
@@ -13,6 +14,9 @@ class Top5 extends Component {
     constructor(props) {
         super(props);
         this.state = {date: new Date(), datalist:[] };
+
+        this.handleClickCode = this.handleClickCode.bind( this );
+
     }
 
     componentDidMount() {
@@ -23,9 +27,23 @@ class Top5 extends Component {
             this.setState({ datalist: data.data } );
             
         })
+         
+        console.log("params:", this.props.match)
     
     }
+    handleClickCode(txt,a,b) {
+        console.log('The link was clicked.  '  );
+        console.log( txt.val   );
+  
 
+        //txt.preventDefault();
+ 
+        // this.setState({
+        //     Val: 100
+        // });
+    }
+
+  
 
     render() {
 
@@ -33,9 +51,9 @@ class Top5 extends Component {
 
         const columns = [{
             title: '合约',
-            dataIndex: 'code',
+            dataIndex: 'code', //{ this.handleClickCode } 
             key: 'code',
-            render: text => <a href="javascript:;">{text}</a>,
+            render: text =>  <a href="javascript:void(0);" onClick=  {this.handleClickCode} >{text}</a>,
           }, {
             title: '振幅',
             dataIndex: 'zf20',
@@ -46,59 +64,34 @@ class Top5 extends Component {
             key: 'kline',
             render: text => <a href="javascript:;">K线图</a>,
           }
-          
-        //   , {
-        //     title: 'Tags',
-        //     key: 'tags',
-        //     dataIndex: 'tags',
-        //     render: tags => (
-        //       <span>
-        //         {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
-        //       </span>
-        //     ),
-        //   }, {
-        //     title: 'Action',
-        //     key: 'action',
-        //     render: (text, record) => (
-        //       <span>
-        //         <a href="javascript:;">Invite {record.name}</a>
-        //         <Divider type="vertical" />
-        //         <a href="javascript:;">Delete</a>
-        //       </span>
-        //     ),
-        //   }
-        
+
         ];
-          /*
-          const data = [{
-            key: '1',
-            name: 'RU',
-            zf: 3.5,
-            kline: 'New York No. 1 Lake Park',
-            tags: ['nice', 'developer'],
-          }, {
-            key: '2',
-            name: 'TA',
-            zf: 3.3,
-            kline: 'London No. 1 Lake Park',
-            tags: ['loser'],
-          }, {
-            key: '3',
-            name: 'RB',
-            zf: 3.1,
-            kline: 'Sidney No. 1 Lake Park',
-            tags: ['cool', 'teacher'],
-          }];
-          */
+     
          let data = []
          if( this.state.datalist )
             data = this.state.datalist.data  
+         let code ="RB0"   
          console.log('render : ')
          console.log( data )
         return (
             <div className={styles.normal}>
                 <span>{dateStr}</span>
-                <Table columns={columns} dataSource={data} />
+                <Table columns={columns} dataSource={data} 
+                  onRow={(record) => {
+                    return {
+                        onClick: () => {  // 点击行
+                            console.log('onRow onClick:', record )
+                            code = record.code 
+                            this.props.history.push('/zfline/' + record.code )
+                        },       
+                    
+                    
+                    };
+                }}
+             
+                  />
+                <span>{ code }振幅曲线</span>
+                <TimelineChart zfcode={code}/>
             </div>
         )
     }

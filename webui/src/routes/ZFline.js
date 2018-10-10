@@ -7,31 +7,36 @@ import { Table, Divider, Tag } from 'antd';
 
 import styles from './Top5.css'
 import request from '../utils/request'
+import TimelineChart from '../components/TimelineChart'
 
 
 class ZFline extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {date: new Date(), datalist:[] };
+        this.state = {date: new Date(), datalist:[], code:"RU0" };
     }
 
     componentDidMount() {
         console.log( "ZFline  DidMount " )  
-        let code ="RU0"
+        console.log("params:", this.props.match.params.code)
+        this.state.code = this.props.match.params.code
+        let code =this.state.code 
         request('/future/zf/'+ code ).then(data => { 
             console.log("------------")
             console.log( data )  
             this.setState({ datalist: data.data } );
             
         })
+        
+        
     
     }
 
 
     render() {
 
-        let dateStr ='振幅排名'
+        let title = this.state.code +  '振幅曲线'
 
         const columns = [{
             title: '合约',
@@ -95,13 +100,21 @@ class ZFline extends Component {
          let data = []
          if( this.state.datalist )
             data = this.state.datalist.data  
-         console.log('render : ')
+         console.log('render : ', this.state.code )
          console.log( data )
+         let code = this.state.code
         return (
+            // <div className={styles.normal}>
+            //     <span>{dateStr}</span>
+            //     <Table columns={columns} dataSource={data} />
+            // </div>
+
             <div className={styles.normal}>
-                <span>{dateStr}</span>
-                <Table columns={columns} dataSource={data} />
-            </div>
+                <span>{title}</span>
+                <TimelineChart zfcode={code}/>
+                
+              
+            </div>            
         )
     }
 }

@@ -27,10 +27,9 @@ class TimelineChart extends React.Component { //_ZF
 
   componentDidMount() {
       console.log( "TimelineChart DidMount " )
-      //let dataUrl = '/future/zf/' + this.props.code
-      let dataUrl = '/future/zf/RU0'  
+      let dataUrl = '/future/zf/' + this.props.zfcode 
       console.log( dataUrl )
-      request( '/future/zf/RU0' ).then(data => { 
+      request( dataUrl ).then(data => { 
           console.log('request : ' + this.props.zfcode )
           if( data.data ){}  
             
@@ -45,9 +44,7 @@ class TimelineChart extends React.Component { //_ZF
 
   render() {
  
-    let data = [
-     
-    ];
+    let data = [ ];
     if( this.state.datalist ){
       data = this.state.datalist ;  
   }
@@ -106,6 +103,10 @@ class TimelineChart extends React.Component { //_ZF
       </div>
     );
   }
+}
+
+TimelineChart.defaultProps = {
+  zfcode: 'RU0'
 }
 
 export default TimelineChart;
