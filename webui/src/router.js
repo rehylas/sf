@@ -13,10 +13,11 @@ const { ConnectedRouter } = routerRedux
 
 
 function RouterConfig({ history, app  }) {
-  const IndexPage = dynamic({
-    app,
-    component: () => import('./routes/IndexPage')
-  })  
+
+  // const IndexPage = dynamic({
+  //   app,
+  //   component: () => import('./routes/IndexPage')
+  // })  
 
   const Top5 = dynamic({
     app,

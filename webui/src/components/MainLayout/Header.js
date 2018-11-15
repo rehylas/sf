@@ -15,11 +15,11 @@ class Header extends Component {
                 theme="dark"
             >
 
-                <Menu.Item key="/">
+                {/* <Menu.Item key="/">
                     <Link to="/">
                         <Icon type="home" />Home
                     </Link>
-                </Menu.Item>
+                </Menu.Item> */}
 
                 <Menu.Item key="/top5 ">
                     <Link to="/top5">
@@ -31,11 +31,12 @@ class Header extends Component {
                         <Icon type="bars" />signal
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="/zfline">
+
+                {/* <Menu.Item key="/zfline">
                     <Link to="/zfline">
                         <Icon type="bars" />zfline
                     </Link>
-                </Menu.Item>
+                </Menu.Item> */}
 
                 <Menu.Item key="/test">
                     <Link to="/test">

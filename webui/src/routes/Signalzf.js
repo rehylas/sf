@@ -6,13 +6,14 @@ import { Table, Divider, Tag } from 'antd';
 
 import styles from './Top5.css'
 import request from '../utils/request'
+import TimelineChart from '../components/TimelineChart'
 
 
 class Signalzf extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {date: new Date(), datalist:[] };
+        this.state = {date: new Date(), datalist:[],code:'RU0' };
     }
 
     componentDidMount() {
@@ -36,16 +37,19 @@ class Signalzf extends Component {
             dataIndex: 'code',
             key: 'code',
             render: text => <a href="javascript:;">{text}</a>,
-          }, {
-            title: '振幅',
-            dataIndex: 'zf20',
-            key: 'zf20',
-          }, {
-            title: 'K线',
-            dataIndex: 'kline',
-            key: 'kline',
-            render: text => <a href="javascript:;">K线图</a>,
-          }, {
+          }, 
+          // {
+          //   title: '振幅',
+          //   dataIndex: 'zf20',
+          //   key: 'zf20',
+          // }, 
+          // {
+          //   title: 'K线',
+          //   dataIndex: 'kline',
+          //   key: 'kline',
+          //   render: text => <a href="javascript:;">K线图</a>,
+          // }, 
+          {
             title: '日期',
             dataIndex: 'date',
             key: 'date',
@@ -103,7 +107,22 @@ class Signalzf extends Component {
         return (
             <div className={styles.normal}>
                 <span>{dateStr}</span>
-                <Table columns={columns} dataSource={data} />
+                <Table columns={columns} dataSource={data} 
+                                  onRow={(record) => {
+                                    return {
+                                        onClick: () => {  // 点击行
+                                            console.log('onRow onClick:', record )
+                                            // code = record.code 
+                                            // this.props.history.push('/zfline/' + record.code )
+                                            this.setState(  { code: record.code  }  )
+                                        },       
+                                    
+                                    
+                                    };
+                                }}
+                />
+                <span>{ this.state.code }振幅曲线</span>
+                <TimelineChart zfcode={ this.state.code  } />                
             </div>
         )
     }

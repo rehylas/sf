@@ -27,41 +27,57 @@ class TimelineChart extends React.Component { //_ZF
 
   componentDidMount() {
       console.log( "TimelineChart DidMount " )
+      this.getdata( this.props.zfcode )
+ 
+
+  }
+
+  getdata = ( code )=>{
       let dataUrl = '/future/zf/' + this.props.zfcode 
-      console.log( dataUrl )
+      console.log( dataUrl )    
       request( dataUrl ).then(data => { 
-          console.log('request : ' + this.props.zfcode )
-          if( data.data ){}  
-            
+        
+        console.log('request : '+ dataUrl  +'  '+ this.props.zfcode )
+        if( data.data ){  
+          
             let adata = data.data.data 
-            console.log('request : ' + adata)
+            console.log('request : ' + adata.length   )
+            console.log( adata[0] )
+            this.state.datalist = adata
             // var   gettype=Object.prototype.toString;
             // console.log("type:", gettype.call(  adata )   )
-            this.setState({ datalist: adata } );                 
+            //this.setState({ datalist: adata } );   
+        }             
       })
-
-  }
+  } 
 
   render() {
- 
+    console.log( 'timeline render ', this.props.zfcode )
+    this.getdata( this.props.zfcode )
+
     let data = [ ];
     if( this.state.datalist ){
-      data = this.state.datalist ;  
-  }
+        data = this.state.datalist ;  
+        data.forEach( (rec,index,arr)=>{
+          rec.zf = rec.zf.toFixed(2)
+         
+        } )
+    }
 
     const ds = new DataSet();
     const dv = ds.createView().source(data);
     dv.transform({
       type: "fold",
-      fields: ["zf5", "zf20"],
+      fields: ["zf5", "zf"],
       // 展开字段集
       key: "city",
       // key字段
-      value: "temperature" // value字段
+      value: "zfval" // value字段
     });
     console.log(dv);
     const cols = {
       date: {
+        type: 'timeCat',
         range: [0, 1]
       }
     };
@@ -71,7 +87,7 @@ class TimelineChart extends React.Component { //_ZF
           <Legend />
           <Axis name="date" />
           <Axis
-            name="temperature"
+            name="zfval"
             label={{
               formatter: val => `${val}`
             }}
@@ -83,14 +99,14 @@ class TimelineChart extends React.Component { //_ZF
           />
           <Geom
             type="line"
-            position="date*temperature"
+            position="date*zfval"
             size={2}
             color={"city"}
             shape={"smooth"}
           />
           <Geom
             type="point"
-            position="date*temperature"
+            position="date*zfval"
             size={4}
             shape={"circle"}
             color={"city"}

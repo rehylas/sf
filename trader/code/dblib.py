@@ -5,6 +5,9 @@
 
 from pymongo import MongoClient
 import time
+import sys
+import logging
+
 
 conn =None
 db = None
@@ -59,7 +62,6 @@ def updateTrader(orderid, status, ctpid = None):
  
     pass
 
-
 def main():
     init()
     updateTrader("9802",9)
@@ -70,6 +72,7 @@ def main():
 
     
 if __name__ == '__main__':
+    logging.info("This is a info log:", sys.argv)
     main()
     #test()
     time.sleep(5)

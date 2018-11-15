@@ -8,6 +8,9 @@ import { Table, Divider, Tag,Button } from 'antd';
 import styles from './Top5.css'
 import request from '../utils/request'
 import TimelineChart from '../components/TimelineChart'
+import Mychart       from '../components/Mychart'
+import MyKchart       from '../components/MyKchart'
+
 import { browserHistory } from 'react-router'
 
 class Test extends Component {
@@ -32,12 +35,16 @@ class Test extends Component {
     render() {
 
         let dateStr ='测试页面'
-        let code ="RB0"
+        let code ="RU0"
         return (
             <div className={styles.normal}>
-                <span>{dateStr}</span>
+
+                {/* <span>{dateStr}</span>
                 <TimelineChart zfcode={code}/>
                 <Button onClick = { this.handleClick } >点击</Button>
+                <span> 图表使用 </span>
+                <Mychart /> */}
+                <MyKchart code={code}/>
               
             </div>
         )
