@@ -84,6 +84,7 @@ def about():
 # /future/zf_top5/<date>
 # /future/zf_top5
 # /future/signal_in_zf_top5
+# /future/kline/RU0
 ########################################################
 
 #获取振幅曲线  
@@ -187,3 +188,35 @@ def future_zf_in_top5_today(  ):
     
 
 
+#获取K线
+#/future/kline/RU0
+@app.route('/future/kline/<code>')
+def future_kline_list(code):
+    client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
+    # db.getCollection('f_k').find({'code':'RU0'})
+    f_k = client.market.f_k
+    data_list =  list( f_k.find( {"code": code } ).sort( "date"  , -1 )  )
+    data = pd.DataFrame( data_list ) 
+    del data['_id']
+    #print data_list
+    #
+    #
+    if( len(data_list) >120 ):
+        dataLen = 120
+    else:
+        dataLen =len(data_list)    
+    resp ='{"data":['
+    for i in range(0, dataLen):
+        #jstr = json.dumps( data_list[i] )
+        
+        item = data_list[i] 
+        item.pop('_id')
+        print item
+        jstr = json.dumps(  item )
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr  
+    resp += ']}'
+    
+    return ''+resp
