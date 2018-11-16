@@ -22,7 +22,7 @@ class TimelineChart extends React.Component { //_ZF
 
   constructor(props) {
       super(props);
-      this.state = {date: new Date(), datalist:[] };
+      this.state = {date: new Date(), datalist:[], updateState:false };
   }
 
   componentDidMount() {
@@ -43,29 +43,34 @@ class TimelineChart extends React.Component { //_ZF
             let adata = data.data.data 
             console.log('request : ' + adata.length   )
             console.log( adata[0] )
+
+            adata.forEach( (rec,index,arr)=>{
+ 
+              rec.zf = rec.zf.toFixed(2)
+             
+            } )
+
             this.state.datalist = adata
-            // var   gettype=Object.prototype.toString;
-            // console.log("type:", gettype.call(  adata )   )
-            //this.setState({ datalist: adata } );   
+            this.state.updateState  = true 
+            this.setState({ datalist: adata } ); 
+   
         }             
       })
   } 
 
   render() {
     console.log( 'timeline render ', this.props.zfcode )
-    this.getdata( this.props.zfcode )
+    
 
-    let data = [ ];
-    if( this.state.datalist ){
-        data = this.state.datalist ;  
-        data.forEach( (rec,index,arr)=>{
-          rec.zf = rec.zf.toFixed(2)
-         
-        } )
-    }
+    if( this.state.updateState  == true ){
+      this.state.updateState  = false
+    }else{
+      this.getdata( this.props.zfcode )
+    }    
 
+ 
     const ds = new DataSet();
-    const dv = ds.createView().source(data);
+    const dv = ds.createView().source( this.state.datalist );
     dv.transform({
       type: "fold",
       fields: ["zf5", "zf"],

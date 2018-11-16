@@ -7,7 +7,7 @@ import { Table, Divider, Tag } from 'antd';
 import styles from './Top5.css'
 import request from '../utils/request'
 import TimelineChart from '../components/TimelineChart'
-
+import MyKchart2       from '../components/MyKchart2'
 
 class Signalzf extends Component {
 
@@ -121,8 +121,10 @@ class Signalzf extends Component {
                                     };
                                 }}
                 />
-                <span>{ this.state.code }振幅曲线</span>
-                <TimelineChart zfcode={ this.state.code  } />                
+                <span>{ this.state.code }   振幅曲线</span>
+                <TimelineChart zfcode={ this.state.code  } />   
+                <span>{ this.state.code }   k线图</span>
+                <MyKchart2  code={ this.state.code  } />             
             </div>
         )
     }

@@ -10,6 +10,8 @@ import request from '../utils/request'
 import TimelineChart from '../components/TimelineChart'
 import Mychart       from '../components/Mychart'
 import MyKchart       from '../components/MyKchart'
+import MyKchart2       from '../components/MyKchart2'
+import EchartsTest       from '../components/EchartsTest'
 
 import { browserHistory } from 'react-router'
 
@@ -44,7 +46,11 @@ class Test extends Component {
                 <Button onClick = { this.handleClick } >点击</Button>
                 <span> 图表使用 </span>
                 <Mychart /> */}
-                <MyKchart code={code}/>
+                {/* <MyKchart code={code}/> */}
+
+                {/* <EchartsTest/> */}
+
+                <MyKchart2/>
               
             </div>
         )
