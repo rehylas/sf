@@ -40,6 +40,7 @@ def readcfg():
     cf=ConfigParser.ConfigParser()
     cf.read("./config.ini")
     db_host = None
+    db_host_mytrader = None
     try:
         db_host = cf.get("db", "db_host")
         db_host_mytrader = cf.get("db", "db_host_mytrader")
@@ -48,10 +49,14 @@ def readcfg():
 
     if( db_host != None ):
         DB_INFO ={ "IP":db_host, "PORT":27017 }
+        MYTRADER_DB_INFO ={ "IP":db_host, "PORT":27017 }
     
     if( db_host_mytrader != None ):
         MYTRADER_DB_INFO ={ "IP":db_host_mytrader, "PORT":27017 }
         dbClient_Mytrader = MongoClient( MYTRADER_DB_INFO["IP"], MYTRADER_DB_INFO["PORT"] )
+    else:
+        dbClient_Mytrader = MongoClient( MYTRADER_DB_INFO["IP"], MYTRADER_DB_INFO["PORT"] )
+
     pass
 
 readcfg()
