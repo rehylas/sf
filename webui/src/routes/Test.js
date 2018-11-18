@@ -11,6 +11,7 @@ import TimelineChart from '../components/TimelineChart'
 import Mychart       from '../components/Mychart'
 import MyKchart       from '../components/MyKchart'
 import MyKchart2       from '../components/MyKchart2'
+import MyFstchart       from '../components/MyFstchart'
 import EchartsTest       from '../components/EchartsTest'
 
 import { browserHistory } from 'react-router'
@@ -48,9 +49,11 @@ class Test extends Component {
                 <Mychart /> */}
                 {/* <MyKchart code={code}/> */}
 
-                {/* <EchartsTest/> */}
+                <EchartsTest/>
 
-                <MyKchart2/>
+                {/* <MyKchart2/> */}
+
+                <MyFstchart/>
               
             </div>
         )

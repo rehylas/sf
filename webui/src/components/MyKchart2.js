@@ -85,7 +85,7 @@ class MyKchart2 extends Component {
             ],
             series : [
                 {
-                    name:'上证指数', 
+                    name:'价格走势', 
                     type:'candlestick',
                     barMaxWidth: 20,
                     itemStyle: {

@@ -8,6 +8,8 @@ import styles from './Top5.css'
 import request from '../utils/request'
 import TimelineChart from '../components/TimelineChart'
 import MyKchart2       from '../components/MyKchart2'
+import MyFstchart       from '../components/MyFstchart'
+
 
 class Signalzf extends Component {
 
@@ -124,7 +126,11 @@ class Signalzf extends Component {
                 <span>{ this.state.code }   振幅曲线</span>
                 <TimelineChart zfcode={ this.state.code  } />   
                 <span>{ this.state.code }   k线图</span>
-                <MyKchart2  code={ this.state.code  } />             
+                <MyKchart2  code={ this.state.code  } /> 
+
+                <span>  分时图</span>
+                <MyFstchart  code={ this.state.code  } />   
+
             </div>
         )
     }

@@ -19,26 +19,39 @@ from flask_cors import CORS
 
 
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
- 
+MYTRADER_DB_INFO ={ "IP":"192.168.0.8", "PORT":27017 }
+
+dbClient = None
+dbClient_Mytrader =  None 
+
 app = Flask(__name__)
 #app.run( host='0.0.0.0' )
 CORS(app, supports_credentials=True)
 app.logger.debug('app start ...')
 
- 
+#app.run(debug=True, use_reloader=False)
+#client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] ) 
 
 def readcfg():
     global DB_INFO
+    global dbClient_Mytrader 
+
     app.logger.debug('readcfg')
     cf=ConfigParser.ConfigParser()
     cf.read("./config.ini")
     db_host = None
     try:
         db_host = cf.get("db", "db_host")
+        db_host_mytrader = cf.get("db", "db_host_mytrader")
     except:
         print "get db db_host error"    
+
     if( db_host != None ):
         DB_INFO ={ "IP":db_host, "PORT":27017 }
+    
+    if( db_host_mytrader != None ):
+        MYTRADER_DB_INFO ={ "IP":db_host_mytrader, "PORT":27017 }
+        dbClient_Mytrader = MongoClient( MYTRADER_DB_INFO["IP"], MYTRADER_DB_INFO["PORT"] )
     pass
 
 readcfg()
@@ -220,3 +233,136 @@ def future_kline_list(code):
     resp += ']}'
     
     return ''+resp
+
+#获取分时线
+#/future/minline/RU0
+@app.route('/future/minline/<code>/<curDate>')
+def future_minline_list(code, curDate=None):
+    print code, curDate
+    resp =""
+    '''
+        db.getCollection('ru1901').find(   {$or :  [   {'time' : {$gte : '20:55:00'},  'date': '20181106' } , 
+        { 'time' : {$lte : '15:16:00'}, 'date':  '20181107' } ] } )
+    '''
+    collectionName = getMainSymbol( code )
+
+    db = dbClient_Mytrader.MyTrader_1Min_Db
+    collection = db[collectionName]
+    
+    strToday, strYestoday = getDate( sDate = curDate )
+    sqlWhere =     {'$or' :  [   {'time' : {'$gte' : '20:55:00'},  'date':  strYestoday } ,   { 'time' : {'$lte' : '15:16:00'}, 'date':  strToday } ] }  
+
+
+    # if curDate == None :
+    #     strDate = ''
+    #     sqlWhere = {}
+    # else:    
+    #     sqlWhere =  { 'time' : {'$gte' : '09:06:00'}, 'date':strDate  } 
+    print 'sqlWhere:',sqlWhere
+    data_list =  list( collection.find( sqlWhere ).sort(   [("date",1),("time",1) ]   )  )
+    dataLen =len(data_list)        
+    resp ='{"data":['
+    for i in range(0, dataLen):
+        #jstr = json.dumps( data_list[i] )
+        
+        item = data_list[i] 
+ 
+
+        item.pop('_id')
+        item.pop('datetime')
+        print item
+        jstr = json.dumps(  item )
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr  
+    resp += ']}'
+
+    return ''+resp
+    pass
+  
+
+#获取Signal 数据
+#/future/signal/RU0
+@app.route('/future/signal/<code>/<curDate>')
+def future_signal_list(code, curDate=None):
+    print code, curDate
+    signalCode = 'goodpot'
+    resp =""
+    '''
+        db.getCollection('ru1901').find(   {$or :  [   {'time' : {$gte : '20:55:00'},  'date': '20181106' } , 
+        { 'time' : {$lte : '15:16:00'}, 'date':  '20181107' } ] } )
+    '''
+    collectionName = getMainSymbol( code )
+
+    db = dbClient_Mytrader.MyTrader_SignalTrading_Db
+    collection = db[collectionName]
+    
+    strToday, strYestoday = getDate( sDate = curDate )
+    sqlWhere =     {'$or' :  [   {'time' : {'$gte' : '20:55:00'},  'date':  strYestoday, 'code':signalCode } ,   { 'time' : {'$lte' : '15:16:00'}, 'date':  strToday, 'code':signalCode  } ] }  
+
+
+    # if curDate == None :
+    #     strDate = ''
+    #     sqlWhere = {}
+    # else:    
+    #     sqlWhere =  { 'time' : {'$gte' : '09:06:00'}, 'date':strDate  } 
+    print 'sqlWhere:',sqlWhere
+    data_list =  list( collection.find( sqlWhere ).sort(   [("date",1),("time",1) ]   )  )
+    dataLen =len(data_list)        
+    resp ='{"data":['
+    for i in range(0, dataLen):
+        #jstr = json.dumps( data_list[i] )
+        
+        item = data_list[i] 
+        item.pop('_id')
+        item.pop('datetime')
+        print item
+        jstr = json.dumps(  item )
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr  
+    resp += ']}'
+
+    return ''+resp
+    pass
+
+
+
+#-------------------------------------------------------------------------
+# 内部函数
+# 获取主力合约代码
+def getMainSymbol( code ):
+    cf=ConfigParser.ConfigParser()
+    cf.read("./config.ini")
+    Symbol = 'ru1901'
+    try:
+        Symbol = cf.get("maincode", code )   
+           
+    except:
+        print "get cfg maincode error ", code    
+
+    return Symbol 
+
+def getDate( sDate = None ):
+    strToday,strYestoday ='',''
+    if( sDate == None ):
+        # 格式化成2016-03-20 11:45:39形式
+        now = datetime.datetime.now()
+         
+        strToday = now.strftime("%Y%m%d")     #"%Y-%m-%d %H:%M:%S"
+        yesTerday = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
+        strYestoday = yesTerday.strftime("%Y%m%d")      
+    else:
+      
+        now = datetime.datetime.strptime(sDate, '%Y-%m-%d')
+        strToday = now.strftime("%Y%m%d")     #"%Y-%m-%d %H:%M:%S"
+        yesTerday = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
+        strYestoday = yesTerday.strftime("%Y%m%d")              
+        pass
+
+    print     strToday,strYestoday
+    return strToday,strYestoday
+
+
