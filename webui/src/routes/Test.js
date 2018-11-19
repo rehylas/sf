@@ -13,6 +13,8 @@ import MyKchart       from '../components/MyKchart'
 import MyKchart2       from '../components/MyKchart2'
 import MyFstchart       from '../components/MyFstchart'
 import EchartsTest       from '../components/EchartsTest'
+import EchartsTest2       from '../components/EchartsTest2'
+ 
 
 import { browserHistory } from 'react-router'
 
@@ -49,7 +51,7 @@ class Test extends Component {
                 <Mychart /> */}
                 {/* <MyKchart code={code}/> */}
 
-                <EchartsTest/>
+                <EchartsTest2/>
 
                 {/* <MyKchart2/> */}
 
@@ -63,4 +65,4 @@ class Test extends Component {
 Test.propsTypes = {}
 
 export default connect()(Test)
- 
+
