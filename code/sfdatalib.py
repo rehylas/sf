@@ -213,7 +213,14 @@ def doFuture_all( doFunction ):
     for index,row in data.iterrows():
         #print row['code']
         print ".",
-        doFunction( row['code'] )
+        try:
+            pass
+            doFunction( row['code'] )
+        except Exception, e :
+            print 'Exception on exec doFunction:', row['code'] 
+            print e
+            pass        
+        
         #break
     pass
     print ""
@@ -244,8 +251,15 @@ def saveFutureKhis2db( futureName, now = False ):
     f_k = client.market.f_k     
     f = open('./'+futureName+'.txt', 'r')
     data = f.read()
+    if(data == None) :
+        f.close()
+        return 
+
     #print data
     recList = list(eval( data ))
+    if(len( recList) <=0 ):
+        print 'futureName 0 data'
+        return 
     print futureName, recList[len(recList)-1]
 
     offset = 0
@@ -270,7 +284,14 @@ def saveFutureKhis2db( futureName, now = False ):
 
 def loadsaveFutureKHis2db( futureName ):
     loadFutureKhis2file( futureName ) 
-    saveFutureKhis2db( futureName )
+    try:
+        pass
+        saveFutureKhis2db( futureName )
+    except Exception, e :
+        print 'Exception on exec saveFutureKhis2db:', futureName
+        print e
+        pass
+    
     pass
 
 def saveFutureKhis2db_all(  ): 
@@ -298,7 +319,15 @@ def loadsaveFutureKNow2db_all():
     
     for index,row in data.iterrows():
         #print row['code']
-        saveFutureKhis2db( row['code'] ,now = True )
+
+        try:
+            pass
+            saveFutureKhis2db( row['code'] ,now = True  )
+        except Exception, e :
+            print 'Exception on exec saveFutureKhis2db:', row['code']
+            print e
+            pass        
+      
      
     pass  
 
