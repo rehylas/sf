@@ -102,7 +102,7 @@ class Top5 extends Component {
                 <span>   k线图</span>
                 <MyKchart2  code={ this.state.code  } />   
                 <span>  分时图</span>
-                <MyFstchart  code={ this.state.code  } />   
+                <MyFstchart  code={ this.state.code }   date =  {this.state.fstDate}  />   
                                 
             </div>
         )

@@ -13,15 +13,41 @@ import 'echarts/lib/chart/candlestick';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/axis';
-
 import request from '../utils/request'
 
+
+Date.prototype.Format = function (fmt) { 
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "h+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+function getDateStr(){   //如果是21点前， 返回当日日期，如果是21点后， 返回明天日期
+    let now = new Date()
+    let dateStr = now.Format("yyyy-MM-dd")
+    if( now.getHours() >= 21 ){
+        let tomo = new Date()
+        tomo.setTime(tomo.getTime()+24*60*60*1000);
+        dateStr = tomo.Format("yyyy-MM-dd")
+    }
+    return dateStr
+}
 
 class MyFstchart extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { date: new Date(),
+        this.state = { 
             datelist: [], datalist: [], 
             datalist_goodpot:[],
             myChart: null, updateState: false,
@@ -30,7 +56,8 @@ class MyFstchart extends Component {
 
     componentWillMount() {
         console.log("MyFstchart componentWillMount ")
-        this.getdata(this.props.code)
+  
+        this.getdata(this.props.code, this.props.date)
         setTimeout(() => {
             //this.setState({ myChart: tempMyChart })
             this.setState({ datelist :this.state.datelist , datalist:this.state.datalist });
@@ -137,7 +164,8 @@ class MyFstchart extends Component {
     }
 
     getMinData =( code, date) =>{
-        let strDate = (new Date()).Format("yyyy-MM-dd")  // Format("yyyy-MM-dd hh:mm:ss.S")  ==>  2006-07-02 08:09:04.423 
+        //let strDate = (new Date()).Format("yyyy-MM-dd")  // Format("yyyy-MM-dd hh:mm:ss.S")  ==>  2006-07-02 08:09:04.423 
+        let strDate = date
         let dataUrl = '/future/minline/' + this.props.code + '/' +strDate
         request(dataUrl).then(data => {
             console.log('request : ' + dataUrl + '  ' + this.props.code)
@@ -161,7 +189,8 @@ class MyFstchart extends Component {
     }
 
     getGoodPotData =( code, date) =>{
-        let strDate = (new Date()).Format("yyyy-MM-dd")  // Format("yyyy-MM-dd hh:mm:ss.S")  ==>  2006-07-02 08:09:04.423      
+        //let strDate = (new Date()).Format("yyyy-MM-dd")  // Format("yyyy-MM-dd hh:mm:ss.S")  ==>  2006-07-02 08:09:04.423      
+        let strDate = date
         let dataUrl = '/future/signal/' + this.props.code+   '/' +strDate    
         request(dataUrl).then(data => {
             console.log('request : ' + dataUrl + '  ' + this.props.code)
@@ -215,35 +244,26 @@ class MyFstchart extends Component {
         if (this.state.updateState == true) {
             this.state.updateState = false
         } else {
-            this.getdata(this.props.code)
+            this.getdata(this.props.code, this.props.date)
         }
         this.updateFstchart()
         return (
-            <div id="fst_form" style={{ width: 1024, height: 700 }}></div>
+            <div id="fst_form" style={{ width: 1024, height: 650 }}></div>
         );
     }
 
 }
 
+
+
+
+
 MyFstchart.defaultProps = {
-    code: 'RU0'
+    code: 'RU0',
+    date:  getDateStr()
+   
 }
 
 export default MyFstchart;
 
 
-Date.prototype.Format = function (fmt) { //author: meizz 
-    var o = {
-        "M+": this.getMonth() + 1, //月份 
-        "d+": this.getDate(), //日 
-        "h+": this.getHours(), //小时 
-        "m+": this.getMinutes(), //分 
-        "s+": this.getSeconds(), //秒 
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-        "S": this.getMilliseconds() //毫秒 
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-}

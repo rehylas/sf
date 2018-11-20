@@ -32,6 +32,10 @@ function RouterConfig({ history, app  }) {
     app,
     component: () => import('./routes/ZFline')
   })
+  const Fst = dynamic({
+    app,
+    component: () => import('./routes/Fst')
+  })  
   const Test = dynamic({
     app,
     component: () => import('./routes/Test')
@@ -46,6 +50,7 @@ function RouterConfig({ history, app  }) {
         {/* <Route path="/" exact component={ MainForm } />  */}
         <Route path="/Top5" exact component={Top5} />
         <Route path="/signals" exact component={Signalzf} />
+        <Route path="/fst" exact component={Fst} />
         <Route path="/zfline/:code" exact component={ZFline} />
         <Route path="/test" exact component={Test} />
         

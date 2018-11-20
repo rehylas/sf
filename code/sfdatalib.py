@@ -218,6 +218,11 @@ def doFuture_all( doFunction ):
     pass
     print ""
 
+# def loadFutureKhis2file_all():
+#     doFuture_all( loadFutureKhis2file )
+
+#     pass    
+
 def loadFutureKhis2file_all():
     doFuture_all( loadFutureKhis2file )
     return 
@@ -271,11 +276,6 @@ def loadsaveFutureKHis2db( futureName ):
 def saveFutureKhis2db_all(  ): 
     doFuture_all( saveFutureKhis2db )
     pass
-
-def loadFutureKhis2file_all():
-    doFuture_all( loadFutureKhis2file )
-
-    pass    
 
 def loadsaveFutureKHis2db_all():
     doFuture_all( loadsaveFutureKHis2db )

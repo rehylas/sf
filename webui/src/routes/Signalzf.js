@@ -29,7 +29,6 @@ class Signalzf extends Component {
     
     }
 
-
     render() {
 
         let dateStr ='振幅进前5信号'
@@ -129,7 +128,7 @@ class Signalzf extends Component {
                 <MyKchart2  code={ this.state.code  } /> 
 
                 <span>  分时图</span>
-                <MyFstchart  code={ this.state.code  } />   
+                <MyFstchart  code={ this.state.code   }  date =  {this.state.fstDate}  />   
 
             </div>
         )

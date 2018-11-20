@@ -31,6 +31,11 @@ class Header extends Component {
                         <Icon type="bars" />signal
                     </Link>
                 </Menu.Item>
+                <Menu.Item key="/fst">
+                    <Link to="/fst">
+                        <Icon type="bars" />fst
+                    </Link>
+                </Menu.Item>                
 
                 {/* <Menu.Item key="/zfline">
                     <Link to="/zfline">

@@ -2,25 +2,14 @@
 
 import React, { Component } from 'react'
 import { connect } from 'dva'
-//import { Chart, Tooltip, Geom, Legend, Axis } from 'bizcharts';
-import { Table, Divider, Tag, Button, Calendar, Row, Col, Tree, Icon } from 'antd';
+import { Calendar, Row, Col, Tree, Icon } from 'antd';
 
-import styles from './Top5.css'
-import request from '../utils/request'
-import TimelineChart from '../components/TimelineChart'
-import Mychart from '../components/Mychart'
-import MyKchart from '../components/MyKchart'
-import MyKchart2 from '../components/MyKchart2'
 import MyFstchart from '../components/MyFstchart'
-import EchartsTest from '../components/EchartsTest'
-import EchartsTest2 from '../components/EchartsTest2'
-
-
-import { browserHistory } from 'react-router'
+//import { browserHistory } from 'react-router'
 
 const TreeNode = Tree.TreeNode;
 
-class Test extends Component {
+class MyFstchart2 extends Component {
 
     constructor(props) {
         super(props);
@@ -28,7 +17,7 @@ class Test extends Component {
     }
 
     componentDidMount() {
-        console.log("Test  DidMount ")
+        console.log("MyFstchart2  DidMount ")
 
 
     }
@@ -64,23 +53,9 @@ class Test extends Component {
     //function(selectedKeys, e:{selected: bool, selectedNodes, node, event})
 
     render() {
-
-        let dateStr = '测试页面'
-        let code = "RU0"
+        let symbols =['RU','RB','TA','ZN','FU','J','M','L']
         return (
-            <div className={styles.normal}>
-
-                {/* <span>{dateStr}</span>
-                <TimelineChart zfcode={code}/>
-                <Button onClick = { this.handleClick } >点击</Button>
-                <span> 图表使用 </span>
-                <Mychart /> */}
-                {/* <MyKchart code={code}/> */}
-
-                <EchartsTest2 />
-
-                {/* <MyKchart2/> */}
-
+            <div  >
                 <Row  >
                 <Col span={19} > <MyFstchart code= {this.state.code}    date =  {this.state.fstDate} /> </Col>
                 <Col span={1}  >
@@ -91,14 +66,22 @@ class Test extends Component {
                     <div>
                     <Tree  onSelect={ this.onSelectCode }   >
                         <TreeNode icon={<Icon type="smile-o" />} title="品种" key="0-0">
-                            <TreeNode icon={<Icon type="meh-o" />} title="RU" key="RU0" />
+                            {    
+                                symbols.map((item, index) => {
+                                    console.log('item:', item )
+                                    return ( <TreeNode icon={<Icon type="right" />} title={ item } key={item+'0'} /> )
+                                })
+                            }
+
+
+                            {/* <TreeNode icon={<Icon type="meh-o" />} title="RU" key="RU0" />
                             <TreeNode
                                 icon={({ selected }) => (
                                 <Icon type={selected ? 'frown' : 'frown-o'} />
                                 )}
                                 title="RB"
                                 key="RB0"
-                            />
+                            /> */}
                         </TreeNode>
                     </Tree>
                     </div>           
@@ -106,16 +89,12 @@ class Test extends Component {
  
                 </Row>
 
-
-                
-
-
             </div>
         )
     }
 }
 
-Test.propsTypes = {}
+MyFstchart2.propsTypes = {}
 
-export default connect()(Test)
+export default connect()(MyFstchart2)
 
