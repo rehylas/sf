@@ -23,17 +23,17 @@ class Header extends Component {
 
                 <Menu.Item key="/top5 ">
                     <Link to="/top5">
-                        <Icon type="bars" />Top 5
+                        <Icon type="bars" />振幅前5
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="/signals">
                     <Link to="/signals">
-                        <Icon type="bars" />signal
+                        <Icon type="bars" />振幅信号
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="/fst">
                     <Link to="/fst">
-                        <Icon type="bars" />fst
+                        <Icon type="bars" />分时图
                     </Link>
                 </Menu.Item>                
 
@@ -45,7 +45,7 @@ class Header extends Component {
 
                 <Menu.Item key="/test">
                     <Link to="/test">
-                        <Icon type="bars" />test
+                        <Icon type="bars" />测试页
                     </Link>
                 </Menu.Item>
 
