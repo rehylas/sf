@@ -75,7 +75,7 @@ class TimelineChart extends React.Component { //_ZF
       type: "fold",
       fields: ["zf5", "zf"],
       // 展开字段集
-      key: "city",
+      key: "blue",//["zf5", "zf"]  ,
       // key字段
       value: "zfval" // value字段
     });
@@ -106,15 +106,15 @@ class TimelineChart extends React.Component { //_ZF
             type="line"
             position="date*zfval"
             size={2}
-            color={"city"}
+            color={"blue"}
             shape={"smooth"}
           />
           <Geom
-            type="point"
+            type="line"
             position="date*zfval"
             size={4}
             shape={"circle"}
-            color={"city"}
+            color={"blue"}
             style={{
               stroke: "#fff",
               lineWidth: 1

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Table, Divider, Tag } from 'antd';
+import { Table, Divider, Tag , Row, Col } from 'antd';
 
 import styles from './Top5.css'
 import request from '../utils/request'
@@ -108,27 +108,34 @@ class Signalzf extends Component {
         return (
             <div className={styles.normal}>
                 <span>{dateStr}</span>
-                <Table columns={columns} dataSource={data} 
-                                  onRow={(record) => {
-                                    return {
-                                        onClick: () => {  // 点击行
-                                            console.log('onRow onClick:', record )
-                                            // code = record.code 
-                                            // this.props.history.push('/zfline/' + record.code )
-                                            this.setState(  { code: record.code  }  )
-                                        },       
-                                    
-                                    
-                                    };
-                                }}
-                />
-                <span>{ this.state.code }   振幅曲线</span>
+                <Row  >  
+                <Col span={8} > 
+                    <Table columns={columns} dataSource={data} 
+                                    onRow={(record) => {
+                                        return {
+                                            onClick: () => {  // 点击行
+                                                console.log('onRow onClick:', record )
+                                                // code = record.code 
+                                                // this.props.history.push('/zfline/' + record.code )
+                                                this.setState(  { code: record.code  }  )
+                                            },       
+                                        
+                                        
+                                        };
+                                    }}
+                    />
+                </Col>    
+                <Col span={16} > 
+                {/* <span>{ this.state.code }   振幅曲线</span> */}
                 <TimelineChart zfcode={ this.state.code  } />   
-                <span>{ this.state.code }   k线图</span>
+                
+                </Col>   
+                </Row>
+                {/* <span>{ this.state.code }   k线图</span> */}
                 <MyKchart2  code={ this.state.code  } /> 
 
-                <span>  分时图</span>
-                <MyFstchart  code={ this.state.code   }  date =  {this.state.fstDate}  />   
+                {/* <span>  分时图</span> */}
+                <MyFstchart  code={ this.state.code   }  />   
 
             </div>
         )

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { Table, Divider, Tag } from 'antd';
+import { Table, Divider, Tag , Row, Col } from 'antd';
 
 import styles from './Top5.css'
 import request from '../utils/request'
@@ -51,7 +51,7 @@ class Top5 extends Component {
 
     render() {
 
-        let dateStr ='振幅排名'
+        let titleTxt ='振幅排名'
 
         const columns = [{
             title: '合约',
@@ -80,7 +80,9 @@ class Top5 extends Component {
          console.log( data )
         return (
             <div className={styles.normal}>
-                <span>{dateStr}</span>
+                <span>{titleTxt}</span>
+                <Row  >  
+                <Col span={8} >  
                 <Table columns={columns} dataSource={data} 
                   onRow={(record) => {
                         return {
@@ -95,14 +97,22 @@ class Top5 extends Component {
                         };
                     }}
              
-                />
-                <span>{ this.state.code }   振幅曲线</span>
-                <TimelineChart zfcode={ this.state.code  } />
+                />                
+                </Col>
+                <Col span={16}  > 
+                {/* <span>{ this.state.code }   振幅曲线</span> */}
+                <TimelineChart zfcode={ this.state.code  } />                
+                </Col>
+                </Row>
+
+                
+
+
 
                 <span>   k线图</span>
                 <MyKchart2  code={ this.state.code  } />   
                 <span>  分时图</span>
-                <MyFstchart  code={ this.state.code }   date =  {this.state.fstDate}  />   
+                <MyFstchart  code={ this.state.code }    />   
                                 
             </div>
         )

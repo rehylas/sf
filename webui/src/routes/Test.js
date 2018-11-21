@@ -77,12 +77,14 @@ class Test extends Component {
                 <Mychart /> */}
                 {/* <MyKchart code={code}/> */}
 
+                <EchartsTest />
                 <EchartsTest2 />
 
                 {/* <MyKchart2/> */}
 
                 <Row  >
-                <Col span={19} > <MyFstchart code= {this.state.code}    date =  {this.state.fstDate} /> </Col>
+                {/* date =  {this.state.fstDate} */}
+                <Col span={19} > <MyFstchart code= {this.state.code}     /> </Col>  
                 <Col span={1}  >
                     <br/><br/>
                     <div style={{ width: 300, border: '1px solid #d9d9d9', borderRadius: 4 }}>
