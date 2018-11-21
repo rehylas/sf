@@ -9,17 +9,34 @@ import MyFstchart from '../components/MyFstchart'
 
 const TreeNode = Tree.TreeNode;
 
+Date.prototype.Format = function (fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "h+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+
 class MyFstchart2 extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { date: new Date(), datalist: [] , fstDate : '2018-11-20' };
+        let now = new Date()
+        let dateStr = now.Format("yyyy-MM-dd")        
+        this.state = { date: new Date(), datalist: [] , fstDate : dateStr  };
     }
 
     componentDidMount() {
         console.log("MyFstchart2  DidMount ")
-
-
     }
 
     handleClick = (e) => {
@@ -64,8 +81,8 @@ class MyFstchart2 extends Component {
                         <Calendar fullscreen={false} onSelect={this.onSelect}  onPanelChange={this.onPanelChange} />
                     </div>     
                     <div>
-                    <Tree  onSelect={ this.onSelectCode }   >
-                        <TreeNode icon={<Icon type="smile-o" />} title="品种" key="0-0">
+                    <Tree  onSelect={ this.onSelectCode } autoExpandParent = "true" defaultExpandAll ="true"   >
+                        <TreeNode icon={<Icon type="smile-o" />} title="品种" key="0-0"  >
                             {    
                                 symbols.map((item, index) => {
                                     console.log('item:', item )
