@@ -322,6 +322,61 @@ def future_signal_list(code, curDate=None):
         item = data_list[i] 
         item.pop('_id')
         item.pop('datetime')
+        #print item
+        jstr = json.dumps(  item )
+        if( i != 0 ):
+            resp += ','+  jstr 
+        else:
+            resp += jstr  
+    resp += ']}'
+
+    return ''+resp
+    pass
+
+
+#获取Exdata 数据
+#/future/exdata/pot/RU0
+@app.route('/future/exdata/<datatype>/<code>/<curDate>')
+def future_exdata_list(code, datatype, curDate=None):
+    print code, curDate
+    signalCode = 'goodpot'
+    resp = getExdataFromDB(code,datatype, curDate)
+    return ''+resp
+    pass
+
+
+
+#-------------------------------------------------------------------------
+# 内部函数
+# 从数据库里获取扩展数据
+def getExdataFromDB( code, datatype, sDate ):
+    print code, datatype, sDate 
+   
+    resp =""
+    collectionName = getMainSymbol( code )
+
+    db = dbClient_Mytrader.MyTrader_Exdata_Db
+    collection = db[collectionName]
+    
+    strToday, strYestoday = getDate( sDate = sDate )
+    sqlWhere =     {'$or' :  [   {'time' : {'$gte' : '20:55:00'},  'date':  strYestoday, 'datatype':datatype } ,   { 'time' : {'$lte' : '15:16:00'}, 'date':  strToday, 'datatype':datatype } ] }  
+
+
+    # if curDate == None :
+    #     strDate = ''
+    #     sqlWhere = {}
+    # else:    
+    #     sqlWhere =  { 'time' : {'$gte' : '09:06:00'}, 'date':strDate  } 
+    print 'sqlWhere:',sqlWhere
+    data_list =  list( collection.find( sqlWhere ).sort(   [("date",1),("time",1) ]   )  )
+    dataLen =len(data_list)        
+    resp ='{"data":['
+    for i in range(0, dataLen):
+        #jstr = json.dumps( data_list[i] )
+        
+        item = data_list[i] 
+        item.pop('_id')
+        #item.pop('datetime')
         print item
         jstr = json.dumps(  item )
         if( i != 0 ):
@@ -335,8 +390,7 @@ def future_signal_list(code, curDate=None):
 
 
 
-#-------------------------------------------------------------------------
-# 内部函数
+
 # 获取主力合约代码
 def getMainSymbol( code ):
     cf=ConfigParser.ConfigParser()

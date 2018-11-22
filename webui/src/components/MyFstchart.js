@@ -49,16 +49,19 @@ function getDateStr() {   //如果是21点前， 返回当日日期，如果是2
 
 class MyFstchart extends Component {
 
+
     constructor(props) {
         super(props);
         this.state = {
             datelist: [], datalist: [],
             datalist_goodpot: [],
-            myChart: null, updateState: false, isResize:false,
-            minClose: 0, maxClose: 0, baseClose:0,
-            width :1000,  height:640
+            datalist_pot:[],
+            myChart: null, updateState: false, isResize: false,
+            minClose: 0, maxClose: 0, baseClose: 0,
+            idInterval: 0,
+            width: 1000, height: 640
         };
-        
+
     }
 
     componentWillMount() {
@@ -70,6 +73,8 @@ class MyFstchart extends Component {
             //this.setState({ myChart: tempMyChart })
             this.setState({ datelist: this.state.datelist, datalist: this.state.datalist });
         }, 2000);
+
+
     }
 
     componentDidMount() {
@@ -82,13 +87,20 @@ class MyFstchart extends Component {
         let tempMyChart = echarts.init(document.getElementById('fst_form'));
         this.setState({ myChart: tempMyChart })
         this.updateFstchart()
-    }
- 
-    componentWillUnmount() {       
-        window.removeEventListener('resize',this.resize);
+
+        this.state.idInterval = setInterval(() => {
+            this.getdata(this.props.code, this.props.date)
+        }, 5000)
+
     }
 
-    resize =() =>{
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resize);
+        clearInterval(this.state.idInterval)
+        this.state.idInterval = 0
+    }
+
+    resize = () => {
         console.log('resize() ')
         this.state.isResize = true
         try {
@@ -96,15 +108,15 @@ class MyFstchart extends Component {
             let { width, height } = this.props;
             //如果props没有指定height和width就自适应
             if (!width) {
-              width = parentDom.offsetWidth;
+                width = parentDom.offsetWidth;
             }
             if (!height) {
-              height = width * 0.64;
+                height = width * 0.64;
             }
             this.setState({ width, height });
             this.state.myChart.resize();
-          
-          } catch (ignore) {
+
+        } catch (ignore) {
         }
     }
 
@@ -176,16 +188,16 @@ class MyFstchart extends Component {
                         data: [
                             {
                                 name: 'Y 轴值为 -1% 的水平线',
-                                yAxis: (this.state.baseClose *  0.99).toFixed(2)    
+                                yAxis: (this.state.baseClose * 0.99).toFixed(2)
                             },
                             {
                                 name: 'Y 轴值为 baseClose 的水平线',
-                                yAxis: (this.state.baseClose *  1.00).toFixed(2)    
-                            },                             
+                                yAxis: (this.state.baseClose * 1.00).toFixed(2)
+                            },
                             {
                                 name: 'Y 轴值为 +1% 的水平线',
-                                yAxis: (this.state.baseClose *  1.01).toFixed(2)    
-                            },                            
+                                yAxis: (this.state.baseClose * 1.01).toFixed(2)
+                            },
 
                             // [
                             //     { name: '标线1起点', value: 11050, xAxis:'09:08:00', yAxis: 11050 },      // 当xAxis为类目轴时，数值1会被理解为类目轴的index，通过xAxis:-1|MAXNUMBER可以让线到达grid边缘
@@ -207,9 +219,19 @@ class MyFstchart extends Component {
             ]
         };
 
+        let series_pot = {
+            name: 'potline',
+            type: 'line',
+            // 数据格式  [['14:00:00',11300],['14:15:00',11350] ]
+            data: this.state.datalist_pot
+        }
+        if (this.props.showPot == true) {
+            option.series.push(series_pot) 
+        }
+
 
         // 绘制图表
-        if (this.state.myChart != null){
+        if (this.state.myChart != null) {
             this.state.myChart.setOption(option);
 
         }
@@ -219,6 +241,7 @@ class MyFstchart extends Component {
     getdata = (code, date) => {
         this.getMinData(code, date);
         this.getGoodPotData(code, date);
+        this.getPotData(code,date);
 
     }
 
@@ -246,8 +269,8 @@ class MyFstchart extends Component {
                 this.state.baseClose = temp[1][0]
                 this.state.datelist = temp[0]
                 this.state.datalist = temp[1]
-                this.state.maxClose = (tempMax).toFixed(2)     
-                this.state.minClose = (tempMin).toFixed(2)  
+                this.state.maxClose = (tempMax).toFixed(2)
+                this.state.minClose = (tempMin).toFixed(2)
                 this.state.updateState = true
                 this.setState({ datelist: temp[0], datalist: temp[1] });
 
@@ -268,21 +291,36 @@ class MyFstchart extends Component {
 
                 let kdata = data.data.data
                 let temp = this.apidata2uidata_signal(data.data.data)
-                // console.log(temp)
-                // temp  = [['14:00:00',11270],['14:15:00',11250] ]
-                // console.log(temp)
                 this.state.datalist_goodpot = temp
                 this.state.updateState = true
                 this.setState({ datalist_goodpot: temp });
 
-                console.log('getGoodPotData:', temp)
-
-                //   setTimeout( ()=>{
-                //     this.setState({ datelist:temp[0] , datalist:temp[1]  } );   
-                //   }, 500 )
             }
         })
     }
+
+
+    getPotData = (code, date) => {
+        //let strDate = (new Date()).Format("yyyy-MM-dd")  // Format("yyyy-MM-dd hh:mm:ss.S")  ==>  2006-07-02 08:09:04.423      
+        let strDate = date
+        let dataUrl = '/future/exdata/pot/' + this.props.code + '/' + strDate
+        request(dataUrl).then(data => {
+            console.log('request : ' + dataUrl + '  ' + this.props.code)
+            if (data.data) {
+
+                let kdata = data.data.data
+                let temp = this.apidata2uidata_pot(data.data.data)
+                console.log('getGoodPotData:', temp)
+ 
+                this.state.datalist_pot = temp
+                this.state.updateState = true
+                this.setState({ datalist_pot: temp });
+                
+            }
+        })
+    }
+
+   
 
     apidata2uidata = (mindata) => {
         let dateList = [];
@@ -307,6 +345,16 @@ class MyFstchart extends Component {
         return dataList
     }
 
+    apidata2uidata_pot =(potdata) =>{
+        let dataList = [];
+        for (let i = 0; i < potdata.length; i++) {
+            let rec = potdata[i]
+            dataList.push([rec.time.substr(0, 5) + ':00', rec.close])
+        }
+
+        return dataList
+    }
+
 
     render() {
         console.log('MyFstchart render() ')
@@ -314,16 +362,16 @@ class MyFstchart extends Component {
         if (this.state.updateState == true) {
             this.state.updateState = false
         } else {
-            if( this.state.isResize == false ){
+            if (this.state.isResize == false) {
                 this.getdata(this.props.code, this.props.date)
             }
-        }  
-        this.state.isResize = false; 
+        }
+        this.state.isResize = false;
         this.updateFstchart()
         //width :-1,  height:-1
         //console.log('this.state.width:', this.state.width )
         return (
-            <div id="fst_form" style={{ width: this.state.width, height: this.state.height }}></div>  
+            <div id="fst_form" style={{ width: this.state.width, height: this.state.height }}></div>
         );
     }
 
@@ -332,7 +380,8 @@ class MyFstchart extends Component {
 
 MyFstchart.defaultProps = {
     code: 'RU0',
-    date: getDateStr()
+    date: getDateStr(),
+    showPot: true
 
 }
 
