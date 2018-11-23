@@ -275,7 +275,7 @@ def future_minline_list(code, curDate=None):
 
         item.pop('_id')
         item.pop('datetime')
-        print item
+        #print item
         jstr = json.dumps(  item )
         if( i != 0 ):
             resp += ','+  jstr 
@@ -373,12 +373,12 @@ def getExdataFromDB( code, datatype, sDate ):
         #jstr = json.dumps( data_list[i] )
         
         item = data_list[i] 
-        print item
+        #print item
         item.pop('_id')
         item.pop('datetime')
         if( datatype =='pot' or datatype == 'jump'):
             item.pop('endtime')
-        print item
+        #print item
       
         jstr = json.dumps(  item )
         if( i != 0 ):
