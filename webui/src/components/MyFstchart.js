@@ -266,6 +266,13 @@ class MyFstchart extends Component {
                 if (Math.min.apply(null, temp[1]) * 0.995 < tempMin) {
                     tempMin = Math.min.apply(null, temp[1]) * 0.995
                 }
+
+                let len = temp[0].length;
+                if( len <= 150 ){
+                    for(let i=0;i <150-len; i++){
+                        temp[0].push('')
+                    }
+                }
                 this.state.baseClose = temp[1][0]
                 this.state.datelist = temp[0]
                 this.state.datalist = temp[1]

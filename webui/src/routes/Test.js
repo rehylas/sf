@@ -11,14 +11,18 @@ import TimelineChart from '../components/TimelineChart'
 import Mychart from '../components/Mychart'
 import MyKchart from '../components/MyKchart'
 import MyKchart2 from '../components/MyKchart2'
-import MyFstchart from '../components/MyFstchart'
+import MyFstchart2 from '../components/MyFstchart2'
 import EchartsTest from '../components/EchartsTest'
 import EchartsTest2 from '../components/EchartsTest2'
-
+import {testFun} from '../utils/comm'
 
 import { browserHistory } from 'react-router'
 
+//var api_cxp = require('./cxpAPI');
+
 const TreeNode = Tree.TreeNode;
+
+
 
 class Test extends Component {
 
@@ -29,6 +33,7 @@ class Test extends Component {
 
     componentDidMount() {
         console.log("Test  DidMount ")
+        testFun()
 
 
     }
@@ -82,8 +87,11 @@ class Test extends Component {
 
                 {/* <MyKchart2/> */}
 
-                <Row  >
-                {/* date =  {this.state.fstDate} */}
+                <MyFstchart2/>
+                
+
+                {/* <Row  >
+               
                 <Col span={19} > <MyFstchart code= {this.state.code}     /> </Col>  
                 <Col span={1}  >
                     <br/><br/>
@@ -106,7 +114,7 @@ class Test extends Component {
                     </div>           
                 </Col>
  
-                </Row>
+                </Row> */}
 
 
                 
