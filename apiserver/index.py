@@ -344,8 +344,6 @@ def future_exdata_list(code, datatype, curDate=None):
     return ''+resp
     pass
 
-
-
 #-------------------------------------------------------------------------
 # 内部函数
 # 从数据库里获取扩展数据
@@ -375,9 +373,13 @@ def getExdataFromDB( code, datatype, sDate ):
         #jstr = json.dumps( data_list[i] )
         
         item = data_list[i] 
-        item.pop('_id')
-        #item.pop('datetime')
         print item
+        item.pop('_id')
+        item.pop('datetime')
+        if( datatype =='pot' or datatype == 'jump'):
+            item.pop('endtime')
+        print item
+      
         jstr = json.dumps(  item )
         if( i != 0 ):
             resp += ','+  jstr 
