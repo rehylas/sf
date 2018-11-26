@@ -57,7 +57,7 @@ class MyFstchart extends Component {
             datalist_goodpot: [],
             datalist_pot:[],
             myChart: null, updateState: false, isResize: false,
-            minClose: 0, maxClose: 0, baseClose: 0,
+            minClose: 0, maxClose: 0, baseClose: 0,lastClose:0,lasttime :'00:00:00',
             idInterval: 0,
             width: 1000, height: 640
         };
@@ -277,7 +277,8 @@ class MyFstchart extends Component {
                 this.state.datelist = temp[0]
                 this.state.datalist = temp[1]
                 this.state.maxClose = (tempMax).toFixed(2)
-                this.state.minClose = (tempMin).toFixed(2)
+                this.state.minClose = (tempMin).toFixed(2) 
+                this.state.lastClose = ( temp[1][ temp[1].length -1 ] ).toFixed(2) 
                 this.state.updateState = true
                 this.setState({ datelist: temp[0], datalist: temp[1] });
 
@@ -317,7 +318,9 @@ class MyFstchart extends Component {
 
                 let kdata = data.data.data
                 let temp = this.apidata2uidata_pot(data.data.data)
-                console.log('getGoodPotData:', temp)
+
+
+                //console.log('getGoodPotData:', temp)
  
                 this.state.datalist_pot = temp
                 this.state.updateState = true
@@ -332,11 +335,13 @@ class MyFstchart extends Component {
     apidata2uidata = (mindata) => {
         let dateList = [];
         let dataList = [];
+        let rec ;
         for (let i = 0; i < mindata.length; i++) {
-            let rec = mindata[i]
+            rec = mindata[i]
             dateList.push(rec.time.substr(0, 8))
             dataList.push(rec.close)
         }
+        this.state.lasttime = rec.time.substr(0, 8)
 
         return [dateList, dataList]
     }
@@ -358,6 +363,15 @@ class MyFstchart extends Component {
             let rec = potdata[i]
             dataList.push([rec.time.substr(0, 5) + ':00', rec.close])
         }
+
+        console.log('dataList :', dataList.length )
+
+        //add lastPrice
+        if( this.state.datelist.length>=1 ){
+            dataList.push([ this.state.lasttime,this.state.lastClose])        
+        }      
+        console.log('dataList :', dataList.length )
+        console.log('dataList -1 :', dataList[dataList.length-1] )      
 
         return dataList
     }
