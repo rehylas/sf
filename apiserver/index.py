@@ -21,6 +21,7 @@ from flask_cors import CORS
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
 MYTRADER_DB_INFO ={ "IP":"192.168.0.8", "PORT":27017 }
 
+GSetting = {"tikfileRootPath":"d:/tikfile/"}
 dbClient = None
 dbClient_Mytrader =  None 
 
@@ -133,9 +134,11 @@ def future_zf_list(code):
             resp += ','+  jstr 
         else:
             resp += jstr  
+       
     resp += ']}'
     
     return ''+resp
+
 
 
 #获取进入前5清单
@@ -149,8 +152,8 @@ def future_zf_top5_list(date = None):
         sqlWhere =  { "date":date,"type":1 }
     data_list =  list( f_signal_zf20.find( sqlWhere ).sort( "date"  , -1 ).limit(10)  )
  
-    if( len(data_list) >5 ):
-        dataLen = 5
+    if( len(data_list) >10 ):
+        dataLen = 10
     else:
         dataLen =len(data_list)    
     resp ='{"data":['
@@ -285,7 +288,7 @@ def future_minline_list(code, curDate=None):
 
     return ''+resp
     pass
-  
+
 
 #获取Signal 数据
 #/future/signal/RU0
@@ -344,6 +347,16 @@ def future_exdata_list(code, datatype, curDate=None):
     return ''+resp
     pass
 
+#获取tikfile文件 
+#/future/tickfile/RU0/2018-11-19
+@app.route('/future/tickfile/<code>/<curDate>')
+def future_tikfile(code,  curDate=None):
+    print code, curDate
+    resp = getGetTickfile(code, curDate )
+    return ''+resp
+    pass
+
+
 #-------------------------------------------------------------------------
 # 内部函数
 # 从数据库里获取扩展数据
@@ -358,20 +371,18 @@ def getExdataFromDB( code, datatype, sDate ):
     
     strToday, strYestoday = getDate( sDate = sDate )
     sqlWhere =     {'$or' :  [   {'time' : {'$gte' : '20:55:00'},  'date':  strYestoday, 'datatype':datatype } ,   { 'time' : {'$lte' : '15:16:00'}, 'date':  strToday, 'datatype':datatype } ] }  
-
-
     # if curDate == None :
     #     strDate = ''
     #     sqlWhere = {}
     # else:    
     #     sqlWhere =  { 'time' : {'$gte' : '09:06:00'}, 'date':strDate  } 
-    print 'sqlWhere:',sqlWhere
+
+    print 'sqlWhere:', sqlWhere
     data_list =  list( collection.find( sqlWhere ).sort(   [("date",1),("time",1) ]   )  )
     dataLen =len(data_list)        
     resp ='{"data":['
     for i in range(0, dataLen):
         #jstr = json.dumps( data_list[i] )
-        
         item = data_list[i] 
         #print item
         item.pop('_id')
@@ -391,6 +402,18 @@ def getExdataFromDB( code, datatype, sDate ):
     pass
 
 
+
+# 获取分笔文件
+# D:\tikfile\ru\20181119\ru01_20181011.csv
+def getGetTickfile(code, curDate ):
+    fileName = GSetting["tikfileRootPath"]+'ru/'+'20181119/'+'ru01_20181011.csv'
+    f = open(fileName)
+    try:
+        fileTxt = f.read( )
+    finally:
+        f.close( )
+    pass
+    return fileTxt
 
 
 # 获取主力合约代码
@@ -423,7 +446,8 @@ def getDate( sDate = None ):
         strYestoday = yesTerday.strftime("%Y%m%d")              
         pass
 
-    print     strToday,strYestoday
+    print  strToday,strYestoday
     return strToday,strYestoday
 
 
+ 
