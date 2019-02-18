@@ -144,16 +144,19 @@ def future_zf_list(code):
 #获取进入前5清单
 @app.route('/future/zf_top5/<date>')
 def future_zf_top5_list(date = None):
+    # db.getCollection('f_zf20').find({'date':'2019-01-29'}).sort( {'zf5':-1} )
     client = MongoClient( DB_INFO["IP"], DB_INFO["PORT"] )
-    f_signal_zf20 = client.market.f_signal_zf20
+    f_zf20 = client.market.f_zf20
     if( date == None ):
-        sqlWhere =  { "type":1 }
+        strTo, strYes = getDate( type = 2 )
+        sqlWhere =  {  "date":strYes }
+        print sqlWhere
     else:    
-        sqlWhere =  { "date":date,"type":1 }
-    data_list =  list( f_signal_zf20.find( sqlWhere ).sort( "date"  , -1 ).limit(10)  )
+        sqlWhere =  { "date":date }
+    data_list =  list( f_zf20.find( sqlWhere ).sort( "zf5"  , -1 ).limit(5)  )
  
-    if( len(data_list) >10 ):
-        dataLen = 10
+    if( len(data_list) >5 ):
+        dataLen = 5
     else:
         dataLen =len(data_list)    
     resp ='{"data":['
@@ -429,7 +432,9 @@ def getMainSymbol( code ):
 
     return Symbol 
 
-def getDate( sDate = None ):
+def getDate( sDate = None,type = 1 ):
+    #type = 1  20190129
+    #type = 2  2019-01-29
     strToday,strYestoday ='',''
     if( sDate == None ):
         # 格式化成2016-03-20 11:45:39形式
@@ -438,12 +443,20 @@ def getDate( sDate = None ):
         strToday = now.strftime("%Y%m%d")     #"%Y-%m-%d %H:%M:%S"
         yesTerday = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
         strYestoday = yesTerday.strftime("%Y%m%d")      
+        if( type == 2 ):
+            strToday = now.strftime("%Y-%m-%d")
+            strYestoday = yesTerday.strftime("%Y-%m-%d")   
+            pass
     else:
       
         now = datetime.datetime.strptime(sDate, '%Y-%m-%d')
         strToday = now.strftime("%Y%m%d")     #"%Y-%m-%d %H:%M:%S"
         yesTerday = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
-        strYestoday = yesTerday.strftime("%Y%m%d")              
+        strYestoday = yesTerday.strftime("%Y%m%d")      
+        if( type == 2 ):
+            strToday = now.strftime("%Y-%m-%d")
+            strYestoday = yesTerday.strftime("%Y-%m-%d")   
+            pass                
         pass
 
     print  strToday,strYestoday

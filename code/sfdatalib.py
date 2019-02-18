@@ -10,6 +10,8 @@ import tushare as ts
 import pandas as pd 
 import time
 import os
+import struct
+import shutil
 import datetime
 import pymongo
 import urllib2
@@ -46,6 +48,9 @@ saveFuturelist2db()    # save futurelist.csv to db
 loadsaveFutureKHis2db( futureName )
 loadsaveFutureKHis2db_all()
 loadsaveFutureKNow2db_all() 
+minupBak()
+minup2tdx()
+minupMonitor()
 
 makeFutureZf20( futureName, nDay = 1 )
 makeFuturezf20_all( )
@@ -58,6 +63,131 @@ saveFutureKhis2db( futureName )
 saveFutureKhis2db_all()
 
 '''
+
+
+######################## STOCK minup     相关业务 #########################
+
+#-------------------------------------------------------------------------------------------
+#C:\Users\Administrator\Downloads\DZH8.21.00.17283\USERDATA\selfstock\1234\自选MINSUP.slf
+#   ==> 自选MINSUP0109.slf 
+#
+#
+#
+SELFSTOCK_PATH = 'C:/Users/Administrator/Downloads/DZH8.21.00.17283/USERDATA/selfstock/1234/'
+def minupBak():
+    now = datetime.datetime.now()  
+    desFile = SELFSTOCK_PATH + u'自选MINSUP'+   "{0:02d}".format(now.month) +   "{0:02d}".format(now.day)+'.slf'
+    scrFile = SELFSTOCK_PATH + u'自选MINSUP.slf'
+    #print now.year, now.month, now.day  , now.hour, now.minute, now.second, now.microsecond   
+
+    if not os.path.isfile(scrFile):
+        print scrFile
+        print 'is not exist'
+        return
+        
+    if    os.path.isfile( desFile ):
+        os.remove( desFile )
+
+    if  not os.path.isfile( desFile ):
+      
+        shutil.copyfile( scrFile, desFile )      #复制文件
+
+    pass
+
+#-------------------------------------------------------------------------------------------
+# .slf 数据格式   
+#  16 字节 + n x  20 字节   
+#  20 字节 =  12（名称） + 2 （sh / sz） +  6 ( 代码 600177) 
+#
+SELFSTOCK_PATH_TDX = u'D:/stock/方正证券/T0002/blocknew/'     #*.blk
+def minup2tdx():
+    now = datetime.datetime.now()  
+    
+    scrFile = SELFSTOCK_PATH + u'自选MINSUP.slf'
+    desFile = SELFSTOCK_PATH_TDX + u'MINSUP.blk'
+    #print now.year, now.month, now.day  , now.hour, now.minute, now.second, now.microsecond   
+
+    if not os.path.isfile(scrFile):
+        print scrFile
+        print 'is not exist'
+        return 
+
+    if    os.path.isfile( desFile ):
+        os.remove( desFile )
+
+        pass
+    
+    # file 2 list 
+    stocks = dzhfile2list( scrFile )
+    # list 2 tdx file 
+    list2tdxfile( stocks , desFile )
+
+    pass 
+
+
+def minupMonitor():
+    pass        
+
+#------------------------------------------------------------------------
+# 大智慧自选股解析
+# .slf 数据格式   
+#  16 字节 + n x  20 字节   
+#  20 字节 =  12（名称） + 2 （sh / sz） +  6 ( 代码 600177) 
+def dzhfile2list(dzffile):
+    sList = []
+    data_offset = 16
+    data_width = 20
+    try:
+        ofile=open( dzffile ,'rb')
+        buf=ofile.read()
+        ofile.close()
+        
+        num=len(buf)
+        no=(num-data_offset)/data_width
+        b = data_offset                         #begin
+        e = data_offset + data_width            #end   
+      
+        for i in xrange(no):
+            #a=unpack('hhfffffii',buf[b:e])
+            name,code = struct.unpack("!12s8s",  buf[b:e] )
+            print code
+            sList.append( code )
+            b=b+ data_width
+            e=e+ data_width
+        #print dl   
+        
+    except Exception, e:
+        print e.message
+        return []        
+    #print df   
+   
+    return sList
+    pass   
+
+
+#------------------------------------------------------------------------
+# 大智慧自选股解析
+# 
+def list2tdxfile(stockList,tdxfile):
+    lines =[]
+    for rec in stockList:
+        sc = rec[0:2]
+        code = rec[2:8]
+        codelab = '' +code + '\n'
+        if( sc== 'SH' ):
+            codelab = '1' +code + '\n'
+        if( sc== 'SZ' ):
+            codelab = '0' +code  + '\n' 
+        lines.append( codelab )                    
+
+    wfile = open(tdxfile, 'w')
+    wfile.writelines( lines )
+    
+    return 0
+    pass 
+
+######################## STOCK minup end         #########################
+
 
 ######################## STOCK #########################
 def loadStocklist2file():
@@ -487,6 +617,26 @@ def inMaxFuturezftop5( oneDay, befDay):
 
 def signalFutureZf_all(  ):
     pass
+
+
+'''
+id, tag, version, count = struct.unpack("!H4s2I", s)
+
+https://www.cnblogs.com/gala/archive/2011/09/22/2184801.html
+id, tag, version, count = struct.unpack("!H4s2I", s)
+struct Header
+{
+
+    unsigned short id;
+
+    char[4] tag;
+
+    unsigned int version;
+
+    unsigned int count;
+
+}
+'''
 
 import datetime
 def test():

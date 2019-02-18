@@ -26,6 +26,7 @@ class SfClientCmd(cmd.Cmd):
         print "loadsave future/fhisk/stock/stockkhis   "
         print "makezf future  "
         print "signal  futurezf/fzf"
+        print "minup bak/2tdx/monitor"
 
     # 定义version 命令，显示版本号
     def do_version(self, arg):  # 定义'version'命令
@@ -159,6 +160,42 @@ class SfClientCmd(cmd.Cmd):
         print "----------------------------------------"             
 
         pass 
+
+    # 定义 minup 命令, minup 相关业务均用此命令  
+    # arg:
+    #     bak/2tdx/monitor        
+    #     bak  备份今天的自动选股
+    #     2tdx 生成同名的通达信自选股
+    #     monitor 把数据导入到数据库， 以便其它子系统可以用       
+    def do_minup(self, arg): 
+        if( arg == "bak"  ):
+            print "minup bak"
+            sfdatalib.minupBak() 
+            print "ok"
+            return 
+        if( arg == "2tdx"  ):
+            print "minup 2tdx"
+            sfdatalib.minup2tdx() 
+            print "ok"
+            return      
+        if( arg == "monitor"  ):
+            print "minup monitor"
+            sfdatalib.minupMonitor() 
+            print "ok"
+            return                      
+
+        print "error arg:", arg
+        print "----------------------------------------"
+        print "example:"
+        print "minup bak  "  
+        print "minup 2tdx " 
+        print "minup monitor " 
+
+        print "----------------------------------------"             
+
+        pass 
+
+   
  
     # 定义 quit/q 命令, 退出  
     # arg:
