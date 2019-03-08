@@ -56,7 +56,7 @@ function RouterConfig({ history, app  }) {
         <Route path="/Top5" exact component={Top5} />
         <Route path="/signals" exact component={Signalzf} />
         <Route path="/fst" exact component={Fst} />
-        <Route path="/stockpot" exact component={StockPot} />
+        <Route path="/stockpot/:code" exact component={StockPot} />
         <Route path="/zfline/:code" exact component={ZFline} />
         <Route path="/test" exact component={Test} />
         

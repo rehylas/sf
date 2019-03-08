@@ -28,6 +28,7 @@ class PotLine extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            code:'002415',
             datalist: null,
             minClose:0, maxClose:0,
             width: 1000, height: 600
@@ -36,28 +37,35 @@ class PotLine extends Component {
     }
 
     componentWillMount() {
-        console.log("MyFstchart componentWillMount ")
+        console.log("PotLine componentWillMount "  )
+      
+ 
  
     }
 
     componentDidMount() {
-        console.log("MyFstchart DidMount ")
+        console.log("PotLine DidMount ")
         // window.addEventListener('resize', this.resize);
 
         
+        console.log('this.props.code :', this.props.code  )
+        this.state.code = this.props.code;
 
         // 基于准备好的dom，初始化echarts实例
         let tempMyChart = echarts.init(document.getElementById('potline_form'));
-        this.setState({ myChart: tempMyChart })
+        this.setState({ myChart: tempMyChart , code: this.props.code })
+ 
+        
         this.updateFstchart()
         setInterval(() => {  
-            this.getPotdata('002415')
+            this.getPotdata( this.state.code )
             
         }, 60000 );
         setTimeout(() => {  
-            this.getPotdata('002415')
+            this.getPotdata( this.state.code )
             
         }, 1000 );
+
     }
 
     componentWillUnmount() {
@@ -222,8 +230,7 @@ class PotLine extends Component {
  
 
     render() {
-        console.log('potline render() ')
-
+        console.log('potline render() ', this.state.code  )
  
         this.state.isResize = false;
         this.updateFstchart()
@@ -237,10 +244,8 @@ class PotLine extends Component {
 }
 
 
-PotLine.defaultProps = {
- 
-    
-}
+PotLine.defaultProps = { code: '002415' 
+ }
 
 export default PotLine;
 
