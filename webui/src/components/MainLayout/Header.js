@@ -35,7 +35,13 @@ class Header extends Component {
                     <Link to="/fst">
                         <Icon type="bars" />分时图
                     </Link>
-                </Menu.Item>                
+                </Menu.Item>     
+
+                <Menu.Item key="/stockpot">
+                    <Link to="/stockpot">
+                        <Icon type="bars" />点差图
+                    </Link>
+                </Menu.Item>                             
 
                 {/* <Menu.Item key="/zfline">
                     <Link to="/zfline">

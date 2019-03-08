@@ -221,9 +221,9 @@ def loadsaveStockList():
     pass  
 
 def loadsaveStockKHis2db( code ):
-    #ts.get_k_data(code,'2010-01-01', '2017-01-01') 
+    #ts.get_k_data(code,'2010-01-01', '2019-02-18') 
     code =  code.strip()  
-    kdata = ts.get_k_data(code,'2010-01-01', '2018-09-01' ) 
+    kdata = ts.get_k_data(code,'2010-01-01', '2019-02-18' ) 
     kdata = kdata[:-1]  #去掉当天
     print type(kdata), '  len:', len(kdata)
     print kdata[-2:]

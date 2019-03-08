@@ -110,16 +110,16 @@ class SfClientCmd(cmd.Cmd):
             print "ok"
             return 
 
-        if( arg == "stockhisk" or arg == "s" ):
-            print "loadsave  stock now k"
-            sfdatalib.loadsaveStockKHis2db() 
+        if( arg == "stockhisk" or arg == "shisk" ):
+            print "loadsave  stock his k"
+            sfdatalib.loadsaveStockKHis2db_all() 
             print "ok"
             return             
 
         print "error arg:", arg
         print "----------------------------------------"
         print "example:"
-        print "loadsave future , loadsave stock, loadsave stockhisk "  
+        print "loadsave future , loadsave stock, loadsave stockhisk, loadsave shisk "  
         print "----------------------------------------"             
 
         pass 
@@ -222,9 +222,14 @@ def runserver():
             sfdatalib.loadsaveFutureKNow2db_all()
             sfdatalib.makeFuturezf20_all()
             sfdatalib.signalFutureZf()
+
+            # 股票
+            print "-------------------------------------"
+            print "do  s data "            
+            sfdatalib.loadsaveStockK2db_all()
+
             print "-------------------------------------"
             time.sleep( 60 )
- 
     pass
 
 #主流程 main 

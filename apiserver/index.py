@@ -17,6 +17,8 @@ import ConfigParser
 from flask import Flask
 from flask_cors import CORS
 
+from stockdata import *     #  stockGetpotdata
+
 
 DB_INFO ={ "IP":"127.0.0.1", "PORT":27017 }
 MYTRADER_DB_INFO ={ "IP":"192.168.0.8", "PORT":27017 }
@@ -104,6 +106,7 @@ def about():
 # /future/zf_top5
 # /future/signal_in_zf_top5
 # /future/kline/RU0
+# /stock/potdata/<code>
 ########################################################
 
 #获取振幅曲线  
@@ -359,6 +362,22 @@ def future_tikfile(code,  curDate=None):
     return ''+resp
     pass
 
+
+#-------------------------------------------------------------------------
+# 股票业务
+
+
+#获取tikfile文件   /stock/potdata/<code>
+#/stock/potdata/002415
+
+@app.route('/stock/potdata/<code>')
+def stock_getpotdata(code,  curDate=None):
+    print code 
+    resp = stockGetpotdata( code )
+    resp = json.dumps(  resp )
+    print 'resp:', resp 
+    return ''+resp
+    pass
 
 #-------------------------------------------------------------------------
 # 内部函数
